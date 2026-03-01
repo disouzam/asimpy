@@ -1,0 +1,14 @@
+Arrival rate: 1.8, service rate per server: 1.0
+Number of servers: 2, utilization rho = 0.90
+
+Mean sojourn time — pooled (single queue):  5.542
+Mean sojourn time — separate (pick a lane): 11.064
+Separate queues are 2.00x slower than pooled
+
+   rho    Pooled W    Separate W    Ratio
+--------------------------------------------
+  0.50       1.326         2.003     1.51x
+  0.60       1.573         2.493     1.58x
+  0.70       1.963         3.308     1.69x
+  0.80       2.698         5.239     1.94x
+  0.90       5.542        11.064     2.00x

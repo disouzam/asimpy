@@ -6,7 +6,7 @@
 {!../examples/timeout.py!}
 ```
 ```text
-{!../output/timeout.txt!}
+{!../output/examples/timeout.txt!}
 ```
 
 ## Barrier
@@ -15,7 +15,7 @@
 {!../examples/barrier.py!}
 ```
 ```text
-{!../output/barrier.txt!}
+{!../output/examples/barrier.txt!}
 ```
 
 ## Shared Resource
@@ -24,7 +24,7 @@
 {!../examples/resource.py!}
 ```
 ```text
-{!../output/resource.txt!}
+{!../output/examples/resource.txt!}
 ```
 
 ## FIFO Queue
@@ -33,7 +33,7 @@
 {!../examples/queue.py!}
 ```
 ```text
-{!../output/queue.txt!}
+{!../output/examples/queue.txt!}
 ```
 
 ## Priority Queue
@@ -42,7 +42,7 @@
 {!../examples/priqueue.py!}
 ```
 ```text
-{!../output/priqueue.txt!}
+{!../output/examples/priqueue.txt!}
 ```
 
 ## Interrupts
@@ -51,7 +51,7 @@
 {!../examples/interrupt.py!}
 ```
 ```text
-{!../output/interrupt.txt!}
+{!../output/examples/interrupt.txt!}
 ```
 
 ## AllOf
@@ -60,7 +60,7 @@
 {!../examples/allof.py!}
 ```
 ```text
-{!../output/allof.txt!}
+{!../output/examples/allof.txt!}
 ```
 
 ## FirstOf with Timeout
@@ -69,7 +69,7 @@
 {!../examples/firstof_timeout.py!}
 ```
 ```text
-{!../output/firstof_timeout.txt!}
+{!../output/examples/firstof_timeout.txt!}
 ```
 
 ## FirstOf with Queue
@@ -78,5 +78,5 @@
 {!../examples/firstof_queue.py!}
 ```
 ```text
-{!../output/firstof_queue.txt!}
+{!../output/examples/firstof_queue.txt!}
 ```

@@ -1,0 +1,18 @@
+Tandem Queue: high-variance Stage 1 starves low-variance Stage 2
+  Arrival rate: 0.8, mean service per stage: 1.0
+  Stage 1: hyperexponential (high variance)
+  Stage 2: deterministic (zero variance)
+
+  Buffer K    Throughput   Stage2 Idle %
+  ----------------------------------------
+         1        0.6301           37.0%
+         2        0.6555           34.5%
+         3        0.6909           30.9%
+         5        0.7294           27.1%
+         8        0.7762           22.3%
+        13        0.7966           20.3%
+        21        0.8007           19.9%
+
+  Theoretical Stage 2 idle fraction with unlimited buffer ≈ 0%
+  (both stages have equal mean service rate, so Stage 2 is never idle
+   in steady state — but variability at Stage 1 starves it in practice)

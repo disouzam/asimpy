@@ -1,0 +1,24 @@
+Little's Law verification: L = lambda * W
+========================================================
+
+  M/M/1 (rho=0.70, 1 server)
+    Observed throughput lambda = 0.7000  (target 0.7000)
+    Mean sojourn time   W      = 3.3896
+    L (direct sample)          = 2.3732
+    L = lambda * W             = 2.3727
+    Relative error             = -0.02%
+
+  M/D/1 (rho=0.70, deterministic service)
+    Observed throughput lambda = 0.6999  (target 0.7000)
+    Mean sojourn time   W      = 2.1605
+    L (direct sample)          = 1.5120
+    L = lambda * W             = 1.5121
+    Relative error             = 0.01%
+
+  M/M/3 (rho=0.80 per server, 3 servers)
+    Observed throughput lambda = 2.3974  (target 2.4000)
+    Mean sojourn time   W      = 2.0537
+    L (direct sample)          = 4.9242
+    L = lambda * W             = 4.9237
+    Relative error             = -0.01%
+

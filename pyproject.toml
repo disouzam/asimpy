@@ -41,7 +41,6 @@ dev = [
     "coverage>=7.13.2",
     "markdown-include>=0.8.1",
     "mkdocs>=1.6.1",
-    "mkdocs-awesome-pages-plugin>=2.10.1",
     "mkdocs-material>=9.7.1",
     "mkdocstrings[python]>=1.0.0",
     "pytest>=9.0.2",
@@ -73,14 +72,22 @@ fix = {help = "fix code issues", cmd = "ruff check --fix ."}
 format = {help = "format code", cmd = "ruff format ."}
 lint = {help = "run all code checks", cmd = "task check && task types"}
 examples = {help = "regenerate example output", cmd = """
-mkdir -p output &&
+mkdir -p output/examples &&
 for file in examples/*.py
 do
     name=$(basename "$file" .py)
-    python "$file" > "output/$name.txt" 2>&1
+    python "$file" > "output/examples/$name.txt" 2>&1
 done
 """}
 publish = {help = "publish using ~/.pypirc credentials", cmd = "twine upload --verbose dist/*"}
+scenarios = {help = "regenerate scenario output", cmd = """
+mkdir -p output/scenarios &&
+for file in scenarios/*.py
+do
+    name=$(basename "$file" .py)
+    python "$file" > "output/scenarios/$name.txt" 2>&1
+done
+"""}
 serve = {help = "serve documentation", cmd = "python -m http.server -d docs"}
 test = {help = "run tests", cmd = "pytest tests"}
 types = {help = "check types", cmd = "ty check ."}

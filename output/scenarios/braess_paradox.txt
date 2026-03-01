@@ -1,0 +1,35 @@
+Braess's Paradox
+  4000 drivers, congested link delay = n/capacity (capacity=100)
+  Constant link delay = 45.0 (links AT and SB)
+
+Without shortcut — convergence to equilibrium:
+   Round   n_top   n_bot    Mean T
+       1    2000    2000     65.00
+      11    2000    2000     65.00
+      21    2000    2000     65.00
+      31    2000    2000     65.00
+      41    2000    2000     65.00
+      51    2000    2000     65.00
+      61    2000    2000     65.00
+      71    2000    2000     65.00
+      80    2000    2000     65.00
+
+With shortcut — convergence to equilibrium:
+   Round   n_top   n_bot   n_short    Mean T
+       1       0       0      4000     80.00
+      11     143     143      3714     77.60
+      21     146     146      3708     77.55
+      31     146     146      3708     77.55
+      41     146     146      3708     77.55
+      51     146     146      3708     77.55
+      61     146     146      3708     77.55
+      71     146     146      3708     77.55
+      80     147     147      3706     77.54
+
+  Nash equilibrium travel time WITHOUT shortcut: 65.00
+  Nash equilibrium travel time WITH shortcut:    77.54
+  Adding the shortcut increased travel time by 12.54 units (19.3% worse for every driver)
+
+Theoretical predictions:
+  Without shortcut (50/50 split): 2000/100 + 45 = 65.00
+  With shortcut (all on SA→AB→BT): 4000/100 + 4000/100 = 80.00

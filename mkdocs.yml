@@ -5,8 +5,41 @@ site_dir: docs
 theme:
   name: material
 
+nav:
+  - index.md
+  - license.md
+  - conduct.md
+  - contributing.md
+  - examples.md
+  - Tutorial:
+    - tutorial/01_minimal.md
+    - tutorial/02_queue.md
+    - tutorial/03_interrupt.md
+    - tutorial/04_combine.md
+  - Reference:
+    - reference/allof.md
+    - reference/barrier.md
+    - reference/environment.md
+    - reference/event.md
+    - reference/firstof.md
+    - reference/interrupt.md
+    - reference/process.md
+    - reference/resource.md
+    - reference/simqueue.md
+    - reference/timeout.md
+  - Scenarios:
+    - scenarios/braess_paradox.md
+    - scenarios/convoy_effect.md
+    - scenarios/inspectors_paradox.md
+    - scenarios/late_merge.md
+    - scenarios/littles_law.md
+    - scenarios/mm1_nonlinearity.md
+    - scenarios/pooled_vs_separate.md
+    - scenarios/priority_starvation.md
+    - scenarios/rush_hour.md
+    - scenarios/tandem_queue.md
+
 plugins:
-- awesome-pages
 - mkdocstrings:
     handlers:
       python:
@@ -16,8 +49,14 @@ plugins:
 markdown_extensions:
 - markdown_include.include:
     base_path: docs
+- pymdownx.arithmatex:
+    generic: true
 - pymdownx.highlight
 - pymdownx.superfences
+
+extra_javascript:
+- js/mathjax.js
+- https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 exclude_docs: >
   *~

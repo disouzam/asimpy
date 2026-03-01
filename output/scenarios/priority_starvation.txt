@@ -1,0 +1,25 @@
+Priority Starvation
+  lo-priority: arrival rate 0.2, mean service 1.0, rho_lo = 0.20
+  Aging threshold: 15.0 time units
+
+Part 1 — Static priority: effect of hi-priority load on lo-priority wait
+   rho_hi   rho_total   Mean W_hi   Mean W_lo
+  ----------------------------------------------
+     0.10        0.30        0.79        1.44
+     0.20        0.40        0.90        1.63
+     0.40        0.60        1.17        2.67
+     0.60        0.80        1.78        7.60
+     0.70        0.90        2.34       19.88
+     0.80        1.00        3.50      186.69
+
+Part 2 — Static vs. aging at rho_hi=0.70, rho_total=0.90
+
+  Static priority (hi always beats lo):
+    Hi: n=41881 mean=  2.34  p95=  6.07  p99=  8.75
+    Lo: n=5874  mean= 19.88  p95= 71.54  p99=107.41
+
+  Aging (lo promoted after 15 units):
+    Hi: n=41864 mean=  5.24  p95= 19.54  p99= 29.41
+    Lo: n=5883  mean=  9.80  p95= 18.39  p99= 20.24
+
+  Aging caps max lo-priority wait at ~15 units, reducing p99 from 107.41 to 20.24.

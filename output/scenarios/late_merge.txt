@@ -1,0 +1,21 @@
+Late (Zipper) Merge vs. Early (Courtesy) Merge
+  Arrival rate: 1.85/unit, merge service rate: 2.0/unit
+  Utilisation rho = 0.925,  per-lane buffer = 10
+
+  Metric                   Early merge    Late merge
+  ----------------------------------------------------
+  Total buffer (cars)               10            20
+  Throughput (cars/unit)        1.7510        1.8145
+  Blocked cars %                  5.5%          1.9%
+  Mean sojourn time              2.623         4.189
+
+  Late merge has 1.036x the throughput and 2.8x fewer blocked cars.
+
+  Effect of lane buffer size on early-merge blocking rate:
+  Buffer K   Early blocked %   Late blocked %
+  --------------------------------------------
+         5             10.5%             5.4%
+        10              5.5%             1.9%
+        15              3.0%             0.7%
+        20              1.9%             0.4%
+        30              0.8%             0.1%
