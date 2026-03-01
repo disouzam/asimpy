@@ -906,9 +906,10 @@ In real simulations, processes often need to wait for each other.
 This step introduces our first coordination primitive,
 a first-in/first-out (FIFO) queue that processes can <code>await</code> using <code>get()</code> and <code>put()</code>.</p>
 <h2 id="design">Design</h2>
-<p>The queue maintains two internal lists:</p>
+<p>The queue maintains three internal lists:</p>
 <div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">_items</span>    <span class="c1"># items currently in the queue</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">_getters</span>  <span class="c1"># Event objects for waiting consumers</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">_putters</span>  <span class="c1"># Event objects for waiting producers</span>
 </code></pre></div>
 <p>If an item is available,
 <code>Queue.get()</code> removes it and returns it,
@@ -922,12 +923,10 @@ and suspends the calling process by <code>await</code>ing the event.</p>
 the method checks to see if a consumer is already waiting.
 If so,
 the consumer is immediately resumed with the item.
-Otherwise,
-the item is appended to <code>queue._items</code>.
-If the queue has a maximum capacity and is full,
-<code>put()</code> blocks until space is freed by a <code>get()</code>.</p>
-<p>Notice that <code>queue.get()</code> and <code>queue.put()</code> do not advance simulated time
-(unless <code>put</code> blocks on a full queue).
+If instead the queue has a maximum capacity and is full,
+<code>put()</code> blocks until space is freed by a <code>get()</code>;
+otherwise, the item is appended to <code>queue._items</code>.</p>
+<p>Notice that <code>queue.get()</code> and <code>queue.put()</code> do not advance simulated time.
 If putting something in the queue or getting something from it takes time,
 the simulation needs to use <code>Timeout</code> to model that explicitly.</p>
 
