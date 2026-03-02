@@ -21,7 +21,7 @@ def test_barrier_single_waiter():
 
         async def run(self):
             await self.timeout(5)
-            await self.barrier.release()
+            self.barrier.release()
 
     env = Environment()
     barrier = Barrier(env)
@@ -50,7 +50,7 @@ def test_barrier_multiple_waiters():
 
         async def run(self):
             await self.timeout(10)
-            await self.barrier.release()
+            self.barrier.release()
 
     env = Environment()
     barrier = Barrier(env)
@@ -91,7 +91,7 @@ def test_firstof_barrier_wins_over_timeout():
 
         async def run(self):
             await self.timeout(3)
-            await self.barrier.release()
+            self.barrier.release()
 
     env = Environment()
     barrier = Barrier(env)
@@ -150,7 +150,7 @@ def test_firstof_barrier_late_release_does_not_error():
 
         async def run(self):
             await self.timeout(5)
-            await self.barrier.release()   # must not raise
+            self.barrier.release()   # must not raise
             self.released = True
 
     env = Environment()
@@ -184,9 +184,9 @@ def test_firstof_two_barriers_first_released_wins():
 
         async def run(self):
             await self.timeout(3)
-            await self.b1.release()    # b1 fires first
+            self.b1.release()    # b1 fires first
             await self.timeout(2)
-            await self.b2.release()    # b2 fires second (should be ignored)
+            self.b2.release()    # b2 fires second (should be ignored)
 
     env = Environment()
     b1 = Barrier(env)
@@ -232,7 +232,7 @@ def test_firstof_barrier_multiple_processes_some_race():
 
         async def run(self):
             await self.timeout(5)
-            await self.barrier.release()
+            self.barrier.release()
 
     env = Environment()
     barrier = Barrier(env)

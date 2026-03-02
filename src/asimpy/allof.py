@@ -3,7 +3,7 @@
 from typing import Any
 from .environment import Environment
 from .event import Event
-from ._utils import _ensure_event, _validate
+from ._utils import _ensure_event
 
 
 class AllOf(Event):
@@ -26,7 +26,8 @@ class AllOf(Event):
         name, value = await AllOf(env, a=q1.get(), b=q2.get())
         ```
         """
-        _validate(len(events) > 0, "AllOf requires at least one event")
+        if not events:
+            raise ValueError("AllOf requires at least one event")
         super().__init__(env)
 
         self._events = {}
@@ -35,18 +36,9 @@ class AllOf(Event):
         for key, obj in events.items():
             evt = _ensure_event(env, obj)
             self._events[key] = evt
-            evt._add_waiter(_AllOfWatcher(self, key))
+            evt._add_waiter(lambda v, k=key: self._child_done(k, v))
 
     def _child_done(self, key, value):
         self._results[key] = value
         if len(self._results) == len(self._events):
             self.succeed(self._results)
-
-
-class _AllOfWatcher:
-    def __init__(self, parent, key):
-        self.parent = parent
-        self.key = key
-
-    def resume(self, value):
-        self.parent._child_done(self.key, value)

@@ -1,5 +1,6 @@
 """Test asimpy resource."""
 
+import pytest
 from asimpy import Environment, Resource, Process
 
 
@@ -21,7 +22,7 @@ def test_resource_acquire_and_release():
         async def run(self):
             await self.res.acquire()
             self.acquired = True
-            await self.res.release()
+            self.res.release()
 
     env = Environment()
     res = Resource(env)
@@ -41,7 +42,7 @@ def test_resource_blocking():
         async def run(self):
             await self.res.acquire()
             await self.timeout(10)
-            await self.res.release()
+            self.res.release()
 
     class Waiter(Process):
         def init(self, res):
@@ -52,7 +53,7 @@ def test_resource_blocking():
             await self.timeout(1)
             await self.res.acquire()
             self.acquire_time = self.now
-            await self.res.release()
+            self.res.release()
 
     env = Environment()
     res = Resource(env, capacity=1)
@@ -75,7 +76,7 @@ def test_resource_multiple_capacity():
             await self.res.acquire()
             self.times[self.index] = self.now
             await self.timeout(5)
-            await self.res.release()
+            self.res.release()
 
     env = Environment()
     res = Resource(env, capacity=2)
@@ -150,3 +151,12 @@ def test_resource_cancel_waiting_acquire():
     assert len(res._waiters) == 1
     res._waiters[0].cancel()
     assert len(res._waiters) == 0
+
+
+def test_resource_rejects_non_positive_capacity():
+    """Test that Resource raises ValueError for zero or negative capacity."""
+    env = Environment()
+    with pytest.raises(ValueError, match="capacity must be positive"):
+        Resource(env, capacity=0)
+    with pytest.raises(ValueError, match="capacity must be positive"):
+        Resource(env, capacity=-1)

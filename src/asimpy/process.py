@@ -81,7 +81,7 @@ class Process(ABC):
                 self._interrupt = None
                 yielded = self._coro.throw(exc)
 
-            yielded._add_waiter(self)
+            yielded._add_waiter(self.resume)
 
         except StopIteration:
             self._done = True

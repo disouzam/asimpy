@@ -1,5 +1,6 @@
 """Test asimpy timeout."""
 
+import pytest
 from asimpy import Environment, Timeout
 
 
@@ -45,3 +46,10 @@ def test_timeout_multiple_timeouts():
     assert t3._triggered is True
     assert t1._triggered is True
     assert t2._triggered is True
+
+
+def test_timeout_rejects_negative_delay():
+    """Test that Timeout raises ValueError for a negative delay."""
+    env = Environment()
+    with pytest.raises(ValueError, match="non-negative"):
+        Timeout(env, -1)

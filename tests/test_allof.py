@@ -1,5 +1,6 @@
 """Test asimpy AllOf."""
 
+import pytest
 from asimpy import Environment, AllOf, Process
 
 
@@ -61,3 +62,10 @@ def test_allof_with_coroutines():
     env.run()
     assert proc.result["x"] == "value1"
     assert proc.result["y"] == "value2"
+
+
+def test_allof_requires_at_least_one_event():
+    """Test that AllOf raises ValueError when given no events."""
+    env = Environment()
+    with pytest.raises(ValueError, match="at least one event"):
+        AllOf(env)

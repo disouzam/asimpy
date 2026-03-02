@@ -50,7 +50,7 @@ def test_resource_sharing():
             self.log.append(("start", self.work_id, self.now))
             await self.timeout(5)
             self.log.append(("end", self.work_id, self.now))
-            await self.resource.release()
+            self.resource.release()
 
     env = Environment()
     res = Resource(env, capacity=2)

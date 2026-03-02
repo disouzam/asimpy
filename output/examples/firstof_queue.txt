@@ -1,1 +1,2 @@
 winner got ('a', 'A')
+q2 still has: ['B']

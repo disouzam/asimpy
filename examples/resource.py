@@ -37,7 +37,7 @@ class DirectCustomer(Process):
         print(f"{self.now:>4}: {self.name} starts service")
         await self.timeout(5)
         print(f"{self.now:>4}: {self.name} leaves")
-        await self.counter.release()
+        self.counter.release()
 
 
 print()

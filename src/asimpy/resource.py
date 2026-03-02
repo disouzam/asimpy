@@ -2,7 +2,6 @@
 
 from typing import TYPE_CHECKING
 from .event import Event
-from ._utils import _validate
 
 if TYPE_CHECKING:
     from .environment import Environment
@@ -22,7 +21,8 @@ class Resource:
         Raises:
             ValueError: for invalid `capacity`.
         """
-        _validate(capacity > 0, "require positive capacity for resource not {capacity}")
+        if capacity <= 0:
+            raise ValueError(f"resource capacity must be positive, got {capacity}")
         self._env = env
         self.capacity = capacity
         self._count = 0
@@ -35,7 +35,7 @@ class Resource:
         else:
             await self._acquire_unavailable()
 
-    async def release(self):
+    def release(self):
         """Release one unit of resource."""
         self._count -= 1
         if self._waiters:
@@ -69,4 +69,4 @@ class Resource:
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
-        await self.release()
+        self.release()

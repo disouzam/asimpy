@@ -22,7 +22,7 @@ class Releaser(Process):
     async def run(self):
         print(f"{self.now:>4}: {self.name} starts")
         await self.timeout(2)
-        await self.barrier.release()
+        self.barrier.release()
         print(f"{self.now:>4}: {self.name} finishes")
 
 

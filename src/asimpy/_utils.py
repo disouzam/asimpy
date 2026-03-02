@@ -23,12 +23,6 @@ def _ensure_event(env, obj):
     raise TypeError(f"Expected Event or coroutine, got {type(obj)}")
 
 
-def _validate(cond, msg):
-    """Check value during construction and raise ValueError if invalid."""
-    if not cond:
-        raise ValueError(msg)
-
-
 class _Runner(Process):
     def init(self, evt, obj):
         self.evt = evt

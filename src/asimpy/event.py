@@ -6,10 +6,6 @@ if TYPE_CHECKING:
     from .environment import Environment
 
 
-NO_TIME = object()
-"""Sentinel indicating that time should not advance."""
-
-
 class Event:
     """Manage an event."""
 
@@ -38,8 +34,8 @@ class Event:
             return
         self._triggered = True
         self._value = value
-        for proc in self._waiters:
-            proc.resume(value)
+        for callback in self._waiters:
+            callback(value)
         self._waiters.clear()
 
     def cancel(self):
@@ -51,11 +47,11 @@ class Event:
         if self._on_cancel:
             self._on_cancel()
 
-    def _add_waiter(self, proc):
+    def _add_waiter(self, callback):
         if self._triggered:
-            proc.resume(self._value)
+            callback(self._value)
         elif not self._cancelled:
-            self._waiters.append(proc)
+            self._waiters.append(callback)
 
     def __await__(self):
         value = yield self

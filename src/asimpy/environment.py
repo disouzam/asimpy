@@ -5,24 +5,19 @@ import heapq
 import itertools
 from typing import Callable
 
-from .event import NO_TIME
+# Sentinel returned by Timeout._fire when the timeout was cancelled.
+# Tells run() not to advance the clock for a phantom event.
+_NO_TIME = object()
+
 from .timeout import Timeout
 
 
 class Environment:
     """Simulation environment."""
 
-    _instance = None
-
     def __init__(self):
         self._now = 0
         self._pending = []
-        Environment._instance = self
-
-    @classmethod
-    def sim_time(cls):
-        assert cls._instance is not None
-        return cls._instance.now
 
     @property
     def now(self):
@@ -43,7 +38,7 @@ class Environment:
             if until is not None and pending.time > until:
                 break
             result = pending.callback()
-            if (result is not NO_TIME) and (pending.time > self._now):
+            if (result is not _NO_TIME) and (pending.time > self._now):
                 self._now = pending.time
 
     def __str__(self):

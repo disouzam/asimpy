@@ -1,8 +1,8 @@
 """Wait for a simulated time to pass."""
 
 from typing import TYPE_CHECKING
-from .event import NO_TIME, Event
-from ._utils import _validate
+from .event import Event
+from .environment import _NO_TIME
 
 if TYPE_CHECKING:
     from .environment import Environment
@@ -22,12 +22,13 @@ class Timeout(Event):
         Raises:
             ValueError: for invalid `delay`.
         """
-        _validate(delay >= 0, "require non-negative timeout not {delay}")
+        if delay < 0:
+            raise ValueError(f"timeout delay must be non-negative, got {delay}")
         super().__init__(env)
         env.schedule(env.now + delay, self._fire)
 
     def _fire(self):
         """Handle cancellation case."""
         if self._cancelled:
-            return NO_TIME
+            return _NO_TIME
         self.succeed()

@@ -26,7 +26,7 @@ class Barrier:
         self._waiters.append(evt)
         await evt
 
-    async def release(self):
+    def release(self):
         """Release processes waiting at barrier."""
         for evt in self._waiters:
             evt.succeed()

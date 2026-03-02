@@ -1,5 +1,6 @@
 """Test asimpy FirstOf."""
 
+import pytest
 from asimpy import Environment, Event, FirstOf, Process, Queue, Timeout
 
 
@@ -273,3 +274,10 @@ def test_firstof_queue_multiple_rounds():
     assert rr.results == [("a", "x"), ("b", "y"), ("a", "z")]
     assert q1._getters == []
     assert q2._getters == []
+
+
+def test_firstof_requires_at_least_one_event():
+    """Test that FirstOf raises ValueError when given no events."""
+    env = Environment()
+    with pytest.raises(ValueError, match="at least one event"):
+        FirstOf(env)

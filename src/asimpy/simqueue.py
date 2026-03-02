@@ -4,7 +4,6 @@ import bisect
 from typing import TYPE_CHECKING, Any
 from .event import Event
 from .interrupt import Interrupt
-from ._utils import _validate
 
 if TYPE_CHECKING:
     from .environment import Environment
@@ -26,10 +25,8 @@ class Queue:
         Raises:
             ValueError: for invalid `max_capacity`.
         """
-        _validate(
-            (max_capacity is None) or (max_capacity > 0),
-            "require None or positive integer for max capacity not {max_capacity}"
-        )
+        if max_capacity is not None and max_capacity <= 0:
+            raise ValueError(f"queue max_capacity must be a positive integer, got {max_capacity}")
         self._env = env
         self._priority = priority
         self._max_capacity = max_capacity

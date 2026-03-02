@@ -3,7 +3,7 @@
 from typing import Any
 from .environment import Environment
 from .event import Event
-from ._utils import _ensure_event, _validate
+from ._utils import _ensure_event
 
 
 class FirstOf(Event):
@@ -26,7 +26,8 @@ class FirstOf(Event):
         name, value = await FirstOf(env, a=q1.get(), b=q2.get())
         ```
         """
-        _validate(len(events) > 0, "FirstOf requires at least one event")
+        if not events:
+            raise ValueError("FirstOf requires at least one event")
         super().__init__(env)
 
         self._done = False
@@ -35,7 +36,7 @@ class FirstOf(Event):
         for key, obj in events.items():
             evt = _ensure_event(env, obj)
             self._events[key] = evt
-            evt._add_waiter(_FirstOfWatcher(self, key, evt))
+            evt._add_waiter(lambda v, k=key, e=evt: self._child_done(k, v, e))
 
     def _child_done(self, key, value, winner):
         if self._done:
@@ -48,13 +49,3 @@ class FirstOf(Event):
                 evt.cancel()
 
         self.succeed((key, value))
-
-
-class _FirstOfWatcher:
-    def __init__(self, parent, key, evt):
-        self.parent = parent
-        self.key = key
-        self.evt = evt
-
-    def resume(self, value):
-        self.parent._child_done(self.key, value, self.evt)

@@ -1426,7 +1426,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evt</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">evt</span>
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Release processes waiting at barrier.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">evt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span><span class="p">:</span>
             <span class="n">evt</span><span class="o">.</span><span class="n">succeed</span><span class="p">()</span>
@@ -1523,10 +1523,6 @@
 <h3 id="asimpy.barrier.Barrier.release" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">release</span><span class="p">()</span></code>
 
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
 </h3>
 
 
@@ -1541,7 +1537,7 @@
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Release processes waiting at barrier.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">evt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span><span class="p">:</span>
         <span class="n">evt</span><span class="o">.</span><span class="n">succeed</span><span class="p">()</span>

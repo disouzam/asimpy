@@ -1306,10 +1306,7 @@
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/asimpy/environment.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
@@ -1339,25 +1336,12 @@
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Environment</span><span class="p">:</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Environment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulation environment.&quot;&quot;&quot;</span>
-
-    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">Environment</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="bp">self</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sim_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">now</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">now</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1378,7 +1362,7 @@
             <span class="k">if</span> <span class="n">until</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pending</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="n">until</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">pending</span><span class="o">.</span><span class="n">callback</span><span class="p">()</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NO_TIME</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pending</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_NO_TIME</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pending</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="n">pending</span><span class="o">.</span><span class="n">time</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

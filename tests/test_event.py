@@ -68,25 +68,23 @@ def test_event_cancel_already_triggered():
 
 
 def test_event_add_waiter_after_triggered():
-    """Test adding waiter after event already triggered."""
+    """Test adding a callable waiter after event already triggered calls it immediately."""
     env = Environment()
     evt = Event(env)
     evt.succeed(42)
 
-    waiter = Mock()
-    waiter.resume = Mock()
-    evt._add_waiter(waiter)
-    waiter.resume.assert_called_once_with(42)
+    callback = Mock()
+    evt._add_waiter(callback)
+    callback.assert_called_once_with(42)
 
 
 def test_event_add_waiter_before_trigger():
-    """Test adding waiter before event triggered."""
+    """Test adding a callable waiter before event triggered queues it."""
     env = Environment()
     evt = Event(env)
 
-    waiter = Mock()
-    waiter.resume = Mock()
-    evt._add_waiter(waiter)
+    callback = Mock()
+    evt._add_waiter(callback)
     assert len(evt._waiters) == 1
 
 
@@ -102,18 +100,16 @@ def test_event_cancel_callback():
 
 
 def test_event_succeed_notifies_waiters():
-    """Test that event success notifies all waiters."""
+    """Test that event success calls all waiter callbacks."""
     env = Environment()
     evt = Event(env)
 
-    waiter1 = Mock()
-    waiter1.resume = Mock()
-    waiter2 = Mock()
-    waiter2.resume = Mock()
+    callback1 = Mock()
+    callback2 = Mock()
 
-    evt._add_waiter(waiter1)
-    evt._add_waiter(waiter2)
+    evt._add_waiter(callback1)
+    evt._add_waiter(callback2)
     evt.succeed(99)
 
-    waiter1.resume.assert_called_once_with(99)
-    waiter2.resume.assert_called_once_with(99)
+    callback1.assert_called_once_with(99)
+    callback2.assert_called_once_with(99)
