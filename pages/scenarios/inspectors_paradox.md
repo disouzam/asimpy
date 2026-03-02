@@ -48,6 +48,7 @@ The mean of this biased distribution is $\mu + \sigma^2/\mu$, and you
 arrive uniformly within it, giving expected wait $(\mu + \sigma^2/\mu)/2$.
 
 The same phenomenon explains why:
+
 - The average class size experienced by a student exceeds the average class
   size reported by the university (large classes have more students to report
   them).

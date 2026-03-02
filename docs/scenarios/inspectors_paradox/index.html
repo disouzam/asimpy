@@ -1391,12 +1391,14 @@ density:</p>
 <div class="arithmatex">\[f^*(h) = \frac{h \cdot f(h)}{\mu}\]</div>
 <p>The mean of this biased distribution is <span class="arithmatex">\(\mu + \sigma^2/\mu\)</span>, and you
 arrive uniformly within it, giving expected wait <span class="arithmatex">\((\mu + \sigma^2/\mu)/2\)</span>.</p>
-<p>The same phenomenon explains why:
-- The average class size experienced by a student exceeds the average class
+<p>The same phenomenon explains why:</p>
+<ul>
+<li>The average class size experienced by a student exceeds the average class
   size reported by the university (large classes have more students to report
-  them).
-- The average file size observed during a random disk read is larger than the
-  mean file size (larger files occupy more sectors).</p>
+  them).</li>
+<li>The average file size observed during a random disk read is larger than the
+  mean file size (larger files occupy more sectors).</li>
+</ul>
 <h2 id="implementation">Implementation</h2>
 <p>A <code>BusService</code> process generates buses under three headway distributions
 (regular, exponential, clustered bimodal) and records their arrival times.
