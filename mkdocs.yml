@@ -28,11 +28,15 @@ nav:
     - reference/simqueue.md
     - reference/timeout.md
   - Scenarios:
+    - scenarios/arrival_process.md
+    - scenarios/server_utilization.md
+    - scenarios/queue_formation.md
+    - scenarios/littles_law.md
+    - scenarios/sojourn_time.md
     - scenarios/braess_paradox.md
     - scenarios/convoy_effect.md
     - scenarios/inspectors_paradox.md
     - scenarios/late_merge.md
-    - scenarios/littles_law.md
     - scenarios/mm1_nonlinearity.md
     - scenarios/pooled_vs_separate.md
     - scenarios/priority_starvation.md

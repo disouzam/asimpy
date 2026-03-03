@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -1001,6 +1141,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1053,34 +1204,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1339,6 +1462,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1403,6 +1537,16 @@ QUIC stream independence.</p>
 for FIFO (tupled as <code>(job_id, service_time)</code> to preserve arrival order).
 The same hyperexponential service-time generator (90% short, 10% long) is
 used in both runs.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>The second moment.</strong> For a random variable <span class="arithmatex">\(S\)</span> representing service time, the second moment is <span class="arithmatex">\(E[S^2]\)</span>. Recall from your statistics course that variance is <span class="arithmatex">\(\text{Var}(S) = E[S^2] - (E[S])^2\)</span>, which rearranges to:</p>
+<div class="arithmatex">\[E[S^2] = \text{Var}(S) + (E[S])^2\]</div>
+<p>This means high variance inflates <span class="arithmatex">\(E[S^2]\)</span> even if the mean <span class="arithmatex">\(E[S]\)</span> stays fixed. Doubling the spread of service times can quadruple <span class="arithmatex">\(E[S^2]\)</span>, even with the same average service time.</p>
+<p><strong>Why variance of service time hurts.</strong> Imagine a FIFO server handling jobs that are either 0.1 minutes or 10 minutes long, with 90% being short and 10% being long. The mean service time is <span class="arithmatex">\(0.9 \times 0.1 + 0.1 \times 10 = 1.09\)</span> minutes, so utilization <span class="arithmatex">\(\rho = \lambda / \mu\)</span> might be modest. But when a 10-minute job starts, every job arriving during those 10 minutes must join the queue and wait. The longer <span class="arithmatex">\(E[S^2]\)</span>, the more average work sits ahead of each arriving job.</p>
+<p><strong>The Pollaczek–Khinchine formula.</strong> The mean time a job spends waiting (not counting its own service time) in a FIFO single-server queue is:</p>
+<div class="arithmatex">\[W_q = \frac{\lambda \cdot E[S^2]}{2(1 - \rho)}\]</div>
+<p>Here <span class="arithmatex">\(\lambda\)</span> is the arrival rate, <span class="arithmatex">\(E[S^2]\)</span> is the second moment of service time, and <span class="arithmatex">\(\rho = \lambda \cdot E[S]\)</span> is the server utilization. You do not need to derive this — just notice its structure. Both <span class="arithmatex">\(\lambda\)</span> and <span class="arithmatex">\(E[S^2]\)</span> appear in the numerator, so more variance means more waiting even at the same <span class="arithmatex">\(\rho\)</span>. The <span class="arithmatex">\((1-\rho)\)</span> denominator is the familiar blow-up term from M/M/1.</p>
+<p><strong>The convoy metaphor.</strong> Picture a one-lane road with one slow truck and many fast cars. Every car behind the truck must drive at truck speed; no overtaking allowed. The truck is the long job; the cars are the short jobs stuck behind it in FIFO order. SJF is like a passing lane: fast cars jump ahead of the truck and reach their destination much sooner. The truck itself arrives at the same time either way, but the total delay experienced by all vehicles plummets.</p>
+<p><strong>SJF in practice.</strong> The server usually cannot know job sizes before they start. However, operating systems estimate job length from past behavior and assign priorities accordingly. Web servers use multiplexing so that a slow response to one client does not block fast responses to others. Database query planners reorder operations to run cheaper queries first. All of these are approximations to the SJF ideal, capturing much of the benefit even without perfect foreknowledge of job sizes.</p>
 
 
 

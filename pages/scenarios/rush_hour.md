@@ -67,3 +67,15 @@ with overflow otherwise. Commuters update their departure slot between days
 using a simple best-response rule with noise (they shift to a better
 neighbour with probability $p$). The resulting day-by-day trajectory
 of the departure distribution and mean delay is printed as a compact table.
+
+## Understanding the Math
+
+**What is a congestion game?** Each commuter (the "player") independently chooses a departure time slot. The delay experienced in any given slot depends on how many other commuters choose the same slot — if the slot is over capacity $C$, delay grows with the number of extra commuters. No central authority coordinates choices. This structure — where each player's cost depends on the collective choices of all players — is called a congestion game.
+
+**Nash equilibrium in this context.** A Nash equilibrium is a distribution of departure times such that no individual commuter can reduce their own delay by unilaterally switching to a different slot. At equilibrium, every occupied slot has the same congestion-adjusted cost. If slot 15 were cheaper than slot 14, commuters from slot 14 would shift to slot 15 until the costs equalized. The equilibrium is therefore defined by: all slots with commuters in them have equal cost, and all empty slots have cost no lower than the occupied ones.
+
+**Why Nash equilibrium is not the social optimum.** The social optimum minimizes total delay summed over all commuters. The Nash equilibrium minimizes each person's individual delay given everyone else's choices. These are generally different objectives. At Nash equilibrium, a commuter choosing a crowded slot ignores the extra delay they impose on every other commuter already in that slot. They feel only their own delay; the cost they impose on others is a negative externality that they do not internalize.
+
+**The tragedy of the commons.** Road capacity is a shared resource. When a commuter joins a congested slot, they impose a small extra delay on every other commuter in that slot. If there are $n$ commuters in the slot and one more joins, the extra cost is spread across $n+1$ people — but the newcomer only perceives a fraction $1/(n+1)$ of it. This systematic underweighting of externalities leads to over-use of popular slots, the same dynamic that leads to over-fishing of shared fisheries or over-grazing of common land.
+
+**Why the peak shifts but does not vanish.** Suppose slot 15 is heavily congested. Some commuters shift to slot 14, relieving slot 15. But now slot 14 is more congested, so its commuters shift to slot 13. The congestion wave ripples outward in both directions. Meanwhile, commuters who shifted away from slot 15 now observe it as less congested and some drift back. The system never reaches zero congestion — it perpetually redistributes congestion across nearby slots in a slow drift. The Nash equilibrium exists in theory, but the day-by-day best-response dynamics cycle around it rather than converging to it, particularly when commuters respond noisily to yesterday's conditions.

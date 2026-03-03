@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-b7e23b1183f2b07824922341e5fa751f"}, "mark": {"type": "line", "point": true}, "encoding": {"color": {"field": "metric", "title": "Metric", "type": "nominal"}, "tooltip": [{"field": "rho_target", "type": "quantitative"}, {"field": "metric", "type": "nominal"}, {"field": "fraction", "type": "quantitative"}], "x": {"field": "rho_target", "title": "Target utilization (\u03c1 = \u03bb/\u03bc)", "type": "quantitative"}, "y": {"field": "fraction", "title": "Fraction of time", "type": "quantitative"}}, "title": "Server Utilization: Busy and Idle Fractions vs. \u03c1", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-b7e23b1183f2b07824922341e5fa751f": [{"rho_target": 0.1, "metric": "rho_observed", "fraction": 0.1009}, {"rho_target": 0.2, "metric": "rho_observed", "fraction": 0.1992}, {"rho_target": 0.3, "metric": "rho_observed", "fraction": 0.2986}, {"rho_target": 0.4, "metric": "rho_observed", "fraction": 0.3978}, {"rho_target": 0.5, "metric": "rho_observed", "fraction": 0.4989}, {"rho_target": 0.6, "metric": "rho_observed", "fraction": 0.6002}, {"rho_target": 0.7, "metric": "rho_observed", "fraction": 0.6989}, {"rho_target": 0.8, "metric": "rho_observed", "fraction": 0.7975}, {"rho_target": 0.9, "metric": "rho_observed", "fraction": 0.8988}, {"rho_target": 0.95, "metric": "rho_observed", "fraction": 0.9484}, {"rho_target": 0.1, "metric": "idle_frac", "fraction": 0.8991}, {"rho_target": 0.2, "metric": "idle_frac", "fraction": 0.8008}, {"rho_target": 0.3, "metric": "idle_frac", "fraction": 0.7014}, {"rho_target": 0.4, "metric": "idle_frac", "fraction": 0.6022}, {"rho_target": 0.5, "metric": "idle_frac", "fraction": 0.5011}, {"rho_target": 0.6, "metric": "idle_frac", "fraction": 0.3998}, {"rho_target": 0.7, "metric": "idle_frac", "fraction": 0.3011}, {"rho_target": 0.8, "metric": "idle_frac", "fraction": 0.2025}, {"rho_target": 0.9, "metric": "idle_frac", "fraction": 0.1012}, {"rho_target": 0.95, "metric": "idle_frac", "fraction": 0.0516}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

@@ -1,6 +1,10 @@
 """Tandem Queue Blocking: variability at Stage 1 starves Stage 2."""
 
 import random
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Queue
 
@@ -97,19 +101,33 @@ def simulate(buffer_capacity: int, seed: int = SEED) -> dict:
     }
 
 
+df = pl.DataFrame([simulate(buffer_capacity=k) for k in [1, 2, 3, 5, 8, 13, 21]])
+
 print("Tandem Queue: high-variance Stage 1 starves low-variance Stage 2")
 print(f"  Arrival rate: {ARRIVAL_RATE}, mean service per stage: {MEAN_SERVICE}")
 print("  Stage 1: hyperexponential (high variance)")
 print("  Stage 2: deterministic (zero variance)")
 print()
-print(f"  {'Buffer K':>8}  {'Throughput':>12}  {'Stage2 Idle %':>14}")
-print("  " + "-" * 40)
-
-for k in [1, 2, 3, 5, 8, 13, 21]:
-    r = simulate(buffer_capacity=k)
-    print(f"  {k:>8}  {r['throughput']:>12.4f}  {100 * r['stage2_idle_frac']:>13.1f}%")
-
+print(df)
 print()
-print("  Theoretical Stage 2 idle fraction with unlimited buffer ≈ 0%")
-print("  (both stages have equal mean service rate, so Stage 2 is never idle")
-print("   in steady state — but variability at Stage 1 starves it in practice)")
+print("Theoretical Stage 2 idle fraction with unlimited buffer ≈ 0%")
+
+throughput_line = (
+    alt.Chart(df)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("buffer_capacity:Q", title="Buffer capacity (K)"),
+        y=alt.Y("throughput:Q", title="Throughput (jobs/time)"),
+        tooltip=["buffer_capacity:Q", "throughput:Q"],
+    )
+    .properties(title="Tandem Queue: Throughput vs. Buffer Capacity")
+)
+idle_line = (
+    alt.Chart(df)
+    .mark_line(point=True, strokeDash=[4, 4], color="orange")
+    .encode(
+        x=alt.X("buffer_capacity:Q"),
+        y=alt.Y("stage2_idle_frac:Q", title="Stage 2 idle fraction"),
+    )
+)
+(throughput_line + idle_line).resolve_scale(y="independent").save(sys.argv[1])

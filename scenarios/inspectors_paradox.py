@@ -2,6 +2,10 @@
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process
 
@@ -66,41 +70,55 @@ def headway_variance(bus_arrivals: list[float]) -> float:
     return statistics.variance(headways) if len(headways) > 1 else 0.0
 
 
-print("Inspector's Paradox")
-print(
-    f"  Mean headway: {MEAN_HEADWAY}  =>  naive expected wait = {MEAN_HEADWAY / 2:.1f}"
-)
-print()
-print(
-    f"  {'Mode':<14}  {'Var(headway)':>14}  {'Mean wait':>10}  {'Ratio to naive':>16}"
-)
-print("  " + "-" * 60)
-
+rows = []
+naive = MEAN_HEADWAY / 2.0
 for mode in ["regular", "exponential", "clustered"]:
     buses = collect_buses(mode)
     var_h = headway_variance(buses)
     mean_w = expected_wait(buses)
-    naive = MEAN_HEADWAY / 2.0
-    ratio = mean_w / naive
-    print(f"  {mode:<14}  {var_h:>14.2f}  {mean_w:>10.3f}  {ratio:>15.2f}x")
+    rows.append(
+        {
+            "mode": mode,
+            "var_headway": var_h,
+            "mean_wait": mean_w,
+            "ratio": mean_w / naive,
+        }
+    )
 
-print()
-print("The Inspector's Paradox formula:")
-print("  E[wait] = E[headway]/2 + Var[headway] / (2 * E[headway])")
-print()
+df = pl.DataFrame(rows)
 
-# Verify analytically for exponential case
-# For Exp(1/mu): E[H]=mu, Var[H]=mu^2
-# E[wait] = mu/2 + mu^2/(2*mu) = mu/2 + mu/2 = mu
 mu = MEAN_HEADWAY
-print(f"  Exponential (Var = E^2 = {mu**2:.1f}):")
+var_clustered = 0.5 * (2 - mu) ** 2 + 0.5 * (18 - mu) ** 2
+
+print("Inspector's Paradox")
+print(f"  Mean headway: {MEAN_HEADWAY}  =>  naive expected wait = {naive:.1f}")
+print()
+print(df)
+print()
 print(
-    f"    Predicted wait = {mu / 2:.1f} + {mu**2 / (2 * mu):.1f} = {mu:.1f}  (= full mean headway!)"
+    "The Inspector's Paradox formula: E[wait] = E[headway]/2 + Var[headway] / (2 * E[headway])"
+)
+print(
+    f"  Exponential (Var = E^2 = {mu**2:.1f}): predicted = {mu:.1f}  (= full mean headway!)"
+)
+print(
+    f"  Clustered   (Var = {var_clustered:.1f}):  predicted = {mu / 2 + var_clustered / (2 * mu):.1f}"
 )
 
-# Clustered: E=10, Var = E[(H - 10)^2] = 0.5*(2-10)^2 + 0.5*(18-10)^2 = 64
-var_clustered = 0.5 * (2 - mu) ** 2 + 0.5 * (18 - mu) ** 2
-print(f"  Clustered (Var = {var_clustered:.1f}):")
-print(
-    f"    Predicted wait = {mu / 2:.1f} + {var_clustered / (2 * mu):.1f} = {mu / 2 + var_clustered / (2 * mu):.1f}"
+chart = (
+    alt.Chart(df)
+    .mark_bar()
+    .encode(
+        x=alt.X("mode:N", title="Bus schedule type"),
+        y=alt.Y("mean_wait:Q", title="Mean passenger wait"),
+        color=alt.Color("mode:N", legend=None),
+        tooltip=["mode:N", "mean_wait:Q", "ratio:Q"],
+    )
+    .properties(title="Inspector's Paradox: Mean Wait by Schedule Type")
 )
+naive_line = (
+    alt.Chart(pl.DataFrame({"naive": [naive]}))
+    .mark_rule(strokeDash=[4, 4], color="gray")
+    .encode(y="naive:Q")
+)
+(chart + naive_line).save(sys.argv[1])

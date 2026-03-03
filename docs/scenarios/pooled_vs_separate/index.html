@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -934,34 +1074,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1118,6 +1230,17 @@
     <span class="md-ellipsis">
       
         Implementation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
       
     </span>
   </a>
@@ -1305,6 +1428,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1366,6 +1500,13 @@ airlines and banks demonstrated the improvement empirically in the 1960s–70s.<
    <code>random.choice</code> to pick a server and cannot switch even if it is slower.</li>
 </ol>
 <p>Mean sojourn time is collected with Little's Law <span class="arithmatex">\(W = L/\lambda\)</span>.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>What variance measures.</strong> The variance <span class="arithmatex">\(\sigma^2\)</span> of a random variable tells you how spread out its values are. If a random variable has low variance, almost every observation is close to the mean. High variance means the values are scattered widely. In queueing, high variance in arrival times means customers sometimes arrive in bunches and sometimes leave long gaps — and that unpredictability is costly.</p>
+<p><strong>The idle-time problem.</strong> With two separate queues, the randomness of arrivals can leave one server standing idle while customers queue in the other lane. That idle time is wasted capacity: the idle server could have helped, but customers who already chose the busy lane cannot switch. Pooling a single line into both servers eliminates this mismatch — a free server immediately picks up the next person in line, regardless of which "lane" that person would have joined.</p>
+<p><strong>A simple example.</strong> Suppose each server handles exactly one job every 2 minutes, and jobs arrive at exactly one every 2 minutes — so <span class="arithmatex">\(\rho = 1/2\)</span>. Now suppose two jobs happen to arrive at the same instant. With separate queues, one server gets both jobs and takes 4 minutes total; the other server sits idle for 2 minutes. With a pooled queue, one job goes to each server and both finish in 2 minutes. No wasted capacity, shorter total wait.</p>
+<p><strong>Why pooling always wins.</strong> Two separate M/M/1 queues each running at utilization <span class="arithmatex">\(\rho\)</span> have mean sojourn time <span class="arithmatex">\(W_{\text{sep}} = 1/(\mu(1-\rho))\)</span>. A pooled M/M/2 queue with the same total arrival rate has strictly lower mean sojourn time for every value of <span class="arithmatex">\(0 &lt; \rho &lt; 1\)</span>. The proof uses the Erlang-C formula, but the intuition is simpler: pooling converts two independent random processes into one, and the combined queue can exploit any idle capacity instantly. At <span class="arithmatex">\(\rho = 0.8\)</span>, separate queues give roughly twice the mean wait of a pooled queue.</p>
+<p><strong>Connection to variance reduction.</strong> Think of the service delivered in a time window by two separate servers as two independent random variables <span class="arithmatex">\(X_1\)</span> and <span class="arithmatex">\(X_2\)</span>. Their average <span class="arithmatex">\((X_1 + X_2)/2\)</span> has variance <span class="arithmatex">\(\sigma^2/2\)</span> — half the variance of either component alone. Pooling achieves something similar: by combining demand into one stream served by both servers, the system smooths out random fluctuations. The pooled queue is, in effect, averaging over both servers' idle periods instead of locking each idle period to a single lane.</p>
+<p><strong>Rule of thumb.</strong> At <span class="arithmatex">\(\rho = 0.8\)</span>, separate queues produce roughly double the mean wait of a pooled queue. This factor grows as <span class="arithmatex">\(\rho\)</span> increases, because the <span class="arithmatex">\((1-\rho)\)</span> term in the denominator amplifies any wasted capacity. The lesson: whenever you can route demand flexibly to a shared resource, do it.</p>
 
 
 

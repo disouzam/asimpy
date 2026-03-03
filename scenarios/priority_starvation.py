@@ -8,6 +8,10 @@ Demonstrates two effects:
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Queue
 
@@ -126,9 +130,76 @@ def simulate(
     return sojourn_hi, sojourn_lo
 
 
-def mean_or_na(lst: list) -> str:
-    return f"{statistics.mean(lst):.2f}" if lst else "  N/A"
+def mean_or_none(lst: list) -> float | None:
+    return statistics.mean(lst) if lst else None
 
+
+def pct_or_none(lst: list, p: float) -> float | None:
+    if not lst:
+        return None
+    return sorted(lst)[int(p * len(lst))]
+
+
+# Part 1: sweep hi-priority utilization with static priority
+sweep_rows = []
+for rho_hi in [0.10, 0.20, 0.40, 0.60, 0.70, 0.80]:
+    rate_hi = rho_hi * SERVICE_RATE_HI
+    hi, lo = simulate(rate_hi, use_aging=False)
+    rho_total = rho_hi + ARRIVAL_RATE_LO / SERVICE_RATE_LO
+    sweep_rows.append(
+        {
+            "rho_hi": rho_hi,
+            "rho_total": rho_total,
+            "mean_W_hi": mean_or_none(hi),
+            "mean_W_lo": mean_or_none(lo),
+        }
+    )
+
+df_sweep = pl.DataFrame(sweep_rows)
+
+# Part 2: static vs. aging at a fixed hi load where starvation is visible
+FIXED_RHO_HI = 0.70
+rate_hi = FIXED_RHO_HI * SERVICE_RATE_HI
+rho_total = FIXED_RHO_HI + ARRIVAL_RATE_LO / SERVICE_RATE_LO
+
+hi_static, lo_static = simulate(rate_hi, use_aging=False)
+hi_aging, lo_aging = simulate(rate_hi, use_aging=True)
+
+compare_rows = [
+    {
+        "policy": "static",
+        "class": "hi",
+        "n": len(hi_static),
+        "mean_W": mean_or_none(hi_static),
+        "p95": pct_or_none(hi_static, 0.95),
+        "p99": pct_or_none(hi_static, 0.99),
+    },
+    {
+        "policy": "static",
+        "class": "lo",
+        "n": len(lo_static),
+        "mean_W": mean_or_none(lo_static),
+        "p95": pct_or_none(lo_static, 0.95),
+        "p99": pct_or_none(lo_static, 0.99),
+    },
+    {
+        "policy": "aging",
+        "class": "hi",
+        "n": len(hi_aging),
+        "mean_W": mean_or_none(hi_aging),
+        "p95": pct_or_none(hi_aging, 0.95),
+        "p99": pct_or_none(hi_aging, 0.99),
+    },
+    {
+        "policy": "aging",
+        "class": "lo",
+        "n": len(lo_aging),
+        "mean_W": mean_or_none(lo_aging),
+        "p95": pct_or_none(lo_aging, 0.95),
+        "p99": pct_or_none(lo_aging, 0.99),
+    },
+]
+df_compare = pl.DataFrame(compare_rows)
 
 print("Priority Starvation")
 print(
@@ -137,65 +208,41 @@ print(
 )
 print(f"  Aging threshold: {AGING_THRESHOLD} time units")
 print()
-
-# Part 1: sweep hi-priority utilization with static priority
 print("Part 1 — Static priority: effect of hi-priority load on lo-priority wait")
-print(f"  {'rho_hi':>7}  {'rho_total':>10}  {'Mean W_hi':>10}  {'Mean W_lo':>10}")
-print("  " + "-" * 46)
-for rho_hi in [0.10, 0.20, 0.40, 0.60, 0.70, 0.80]:
-    rate_hi = rho_hi * SERVICE_RATE_HI
-    hi, lo = simulate(rate_hi, use_aging=False)
-    rho_total = rho_hi + ARRIVAL_RATE_LO / SERVICE_RATE_LO
-    print(
-        f"  {rho_hi:>7.2f}  {rho_total:>10.2f}  "
-        f"{mean_or_na(hi):>10}  {mean_or_na(lo):>10}"
-    )
-
+print(df_sweep)
 print()
-
-# Part 2: static vs. aging at a fixed hi load where starvation is visible
-FIXED_RHO_HI = 0.70
-rate_hi = FIXED_RHO_HI * SERVICE_RATE_HI
-rho_total = FIXED_RHO_HI + ARRIVAL_RATE_LO / SERVICE_RATE_LO
-
 print(
     f"Part 2 — Static vs. aging at rho_hi={FIXED_RHO_HI:.2f}, rho_total={rho_total:.2f}"
 )
-print()
+print(df_compare)
 
-hi_static, lo_static = simulate(rate_hi, use_aging=False)
-hi_aging, lo_aging = simulate(rate_hi, use_aging=True)
-
-
-def pct(lst: list, p: float) -> str:
-    if not lst:
-        return "N/A"
-    idx = int(p * len(lst))
-    return f"{sorted(lst)[idx]:.2f}"
-
-
-print("  Static priority (hi always beats lo):")
-print(
-    f"    Hi: n={len(hi_static):<5} mean={mean_or_na(hi_static):>6}  "
-    f"p95={pct(hi_static, 0.95):>6}  p99={pct(hi_static, 0.99):>6}"
+df_plot = df_sweep.unpivot(
+    on=["mean_W_hi", "mean_W_lo"],
+    index=["rho_hi", "rho_total"],
+    variable_name="job_class",
+    value_name="mean_W",
 )
-print(
-    f"    Lo: n={len(lo_static):<5} mean={mean_or_na(lo_static):>6}  "
-    f"p95={pct(lo_static, 0.95):>6}  p99={pct(lo_static, 0.99):>6}"
-)
-print()
-print(f"  Aging (lo promoted after {AGING_THRESHOLD:.0f} units):")
-print(
-    f"    Hi: n={len(hi_aging):<5} mean={mean_or_na(hi_aging):>6}  "
-    f"p95={pct(hi_aging, 0.95):>6}  p99={pct(hi_aging, 0.99):>6}"
-)
-print(
-    f"    Lo: n={len(lo_aging):<5} mean={mean_or_na(lo_aging):>6}  "
-    f"p95={pct(lo_aging, 0.95):>6}  p99={pct(lo_aging, 0.99):>6}"
-)
-print()
-if lo_static and lo_aging:
-    print(
-        f"  Aging caps max lo-priority wait at ~{AGING_THRESHOLD:.0f} units, "
-        f"reducing p99 from {pct(lo_static, 0.99)} to {pct(lo_aging, 0.99)}."
+sweep_chart = (
+    alt.Chart(df_plot)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("rho_hi:Q", title="Hi-priority utilization (ρ_hi)"),
+        y=alt.Y("mean_W:Q", title="Mean sojourn time (W)"),
+        color=alt.Color("job_class:N", title="Job class"),
+        tooltip=["rho_hi:Q", "job_class:N", "mean_W:Q"],
     )
+    .properties(title="Priority Starvation: Effect of Hi-Priority Load")
+)
+compare_chart = (
+    alt.Chart(df_compare)
+    .mark_bar()
+    .encode(
+        x=alt.X("class:N", title="Job class"),
+        y=alt.Y("mean_W:Q", title="Mean sojourn time (W)"),
+        color=alt.Color("policy:N", title="Policy"),
+        xOffset="policy:N",
+        tooltip=["policy:N", "class:N", "mean_W:Q", "p99:Q"],
+    )
+    .properties(title="Static Priority vs. Aging")
+)
+(sweep_chart | compare_chart).save(sys.argv[1])

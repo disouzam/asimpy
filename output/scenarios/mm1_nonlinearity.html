@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-b9c8efdeeb671d76a17440b1d7e67626"}, "mark": {"type": "line", "point": true}, "encoding": {"color": {"field": "source", "title": "Source", "type": "nominal"}, "tooltip": [{"field": "rho", "type": "quantitative"}, {"field": "source", "type": "nominal"}, {"field": "L", "type": "quantitative"}], "x": {"field": "rho", "title": "Utilization (\u03c1)", "type": "quantitative"}, "y": {"field": "L", "title": "Mean queue length (L)", "type": "quantitative"}}, "title": "M/M/1 Queue Length vs. Utilization", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-b9c8efdeeb671d76a17440b1d7e67626": [{"rho": 0.1, "source": "theory_L", "L": 0.11111111111111112}, {"rho": 0.2, "source": "theory_L", "L": 0.25}, {"rho": 0.3, "source": "theory_L", "L": 0.4285714285714286}, {"rho": 0.5, "source": "theory_L", "L": 1.0}, {"rho": 0.7, "source": "theory_L", "L": 2.333333333333333}, {"rho": 0.8, "source": "theory_L", "L": 4.000000000000001}, {"rho": 0.9, "source": "theory_L", "L": 9.000000000000002}, {"rho": 0.95, "source": "theory_L", "L": 18.999999999999982}, {"rho": 0.1, "source": "sim_L", "L": 0.111697018148803}, {"rho": 0.2, "source": "sim_L", "L": 0.24954756358684138}, {"rho": 0.3, "source": "sim_L", "L": 0.43076385080767093}, {"rho": 0.5, "source": "sim_L", "L": 1.0034494622389991}, {"rho": 0.7, "source": "sim_L", "L": 2.320427040115708}, {"rho": 0.8, "source": "sim_L", "L": 3.889173385537071}, {"rho": 0.9, "source": "sim_L", "L": 8.397033635999936}, {"rho": 0.95, "source": "sim_L", "L": 17.772836458001457}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

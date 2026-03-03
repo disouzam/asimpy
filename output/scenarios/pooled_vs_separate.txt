@@ -1,14 +1,15 @@
-Arrival rate: 1.8, service rate per server: 1.0
-Number of servers: 2, utilization rho = 0.90
+Pooled vs. separate queues (2 servers, service rate 1.0)
+shape: (5, 4)
+┌─────┬──────────┬────────────┬──────────┐
+│ rho ┆ pooled_W ┆ separate_W ┆ ratio    │
+│ --- ┆ ---      ┆ ---        ┆ ---      │
+│ f64 ┆ f64      ┆ f64        ┆ f64      │
+╞═════╪══════════╪════════════╪══════════╡
+│ 0.5 ┆ 1.325675 ┆ 2.003236   ┆ 1.511106 │
+│ 0.6 ┆ 1.573211 ┆ 2.49277    ┆ 1.58451  │
+│ 0.7 ┆ 1.962613 ┆ 3.30766    ┆ 1.685335 │
+│ 0.8 ┆ 2.69848  ┆ 5.239367   ┆ 1.941599 │
+│ 0.9 ┆ 5.541606 ┆ 11.064117  ┆ 1.996554 │
+└─────┴──────────┴────────────┴──────────┘
 
-Mean sojourn time — pooled (single queue):  5.542
-Mean sojourn time — separate (pick a lane): 11.064
-Separate queues are 2.00x slower than pooled
-
-   rho    Pooled W    Separate W    Ratio
---------------------------------------------
-  0.50       1.326         2.003     1.51x
-  0.60       1.573         2.493     1.58x
-  0.70       1.963         3.308     1.69x
-  0.80       2.698         5.239     1.94x
-  0.90       5.542        11.064     2.00x
+At rho=0.90: pooled_W=5.542, separate_W=11.064, separate is 2.00x slower

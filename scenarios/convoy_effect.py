@@ -2,6 +2,10 @@
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Queue
 
@@ -86,26 +90,49 @@ def simulate(sjf: bool, seed: int = SEED) -> dict:
 
 
 fifo = simulate(sjf=False)
-sjf = simulate(sjf=True)
+sjf_res = simulate(sjf=True)
 
+rows = [
+    {
+        "metric": m,
+        "fifo": fifo[m],
+        "sjf": sjf_res[m],
+        "improvement": fifo[m] / sjf_res[m],
+    }
+    for m in ("mean", "median", "p95", "p99")
+]
+df = pl.DataFrame(rows)
+
+mean_svc = (1 - LONG_PROB) / SHORT_RATE + LONG_PROB / LONG_RATE
 print("Convoy Effect: FIFO vs. Shortest Job First (SJF)")
-print()
-print(
-    f"  Arrival rate: {ARRIVAL_RATE}, estimated mean service: "
-    f"{(1 - LONG_PROB) / SHORT_RATE + LONG_PROB / LONG_RATE:.3f}"
-)
+print(f"  Arrival rate: {ARRIVAL_RATE}, estimated mean service: {mean_svc:.3f}")
 print(
     f"  Short jobs: {100 * (1 - LONG_PROB):.0f}% (mean {1 / SHORT_RATE:.2f}), "
     f"Long jobs: {100 * LONG_PROB:.0f}% (mean {1 / LONG_RATE:.1f})"
 )
 print()
-print(f"  {'Metric':<12}  {'FIFO':>10}  {'SJF':>10}  {'Improvement':>12}")
-print("  " + "-" * 50)
-for metric in ("mean", "median", "p95", "p99"):
-    ratio = fifo[metric] / sjf[metric]
-    print(
-        f"  {metric:<12}  {fifo[metric]:>10.3f}  {sjf[metric]:>10.3f}  {ratio:>11.2f}x"
-    )
+print(df)
 print()
-print("  Note: SJF is optimal for mean sojourn time but requires")
-print("  knowing job sizes in advance (not always possible in practice).")
+print(
+    "Note: SJF is optimal for mean sojourn time but requires knowing job sizes in advance."
+)
+
+df_plot = df.filter(pl.col("metric") != "n").unpivot(
+    on=["fifo", "sjf"],
+    index="metric",
+    variable_name="policy",
+    value_name="sojourn_time",
+)
+chart = (
+    alt.Chart(df_plot)
+    .mark_bar()
+    .encode(
+        x=alt.X("metric:N", title="Metric"),
+        y=alt.Y("sojourn_time:Q", title="Sojourn time"),
+        color=alt.Color("policy:N", title="Policy"),
+        xOffset="policy:N",
+        tooltip=["metric:N", "policy:N", "sojourn_time:Q"],
+    )
+    .properties(title="Convoy Effect: FIFO vs. Shortest Job First")
+)
+chart.save(sys.argv[1])

@@ -5,6 +5,10 @@ causing more cars to be turned away and reducing throughput.
 """
 
 import random
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Event, Process, Queue
 
@@ -155,46 +159,18 @@ def run_scenario(zipper: bool, seed: int = SEED) -> dict:
     }
 
 
-print("Late (Zipper) Merge vs. Early (Courtesy) Merge")
-print(f"  Arrival rate: {ARRIVAL_RATE}/unit, merge service rate: {MERGE_RATE}/unit")
-print(f"  Utilisation rho = {RHO:.3f},  per-lane buffer = {LANE_CAPACITY}")
-print()
-
 early = run_scenario(zipper=False)
 late = run_scenario(zipper=True)
 
-print(f"  {'Metric':<22}  {'Early merge':>12}  {'Late merge':>12}")
-print("  " + "-" * 52)
-print(
-    f"  {'Total buffer (cars)':<22}  {early['total_buffer']:>12}  "
-    f"{late['total_buffer']:>12}"
+df_main = pl.DataFrame(
+    [
+        {"strategy": "early", **early},
+        {"strategy": "late", **late},
+    ]
 )
-print(
-    f"  {'Throughput (cars/unit)':<22}  {early['throughput']:>12.4f}  "
-    f"{late['throughput']:>12.4f}"
-)
-print(
-    f"  {'Blocked cars %':<22}  {early['blocked_pct']:>11.1f}%  "
-    f"{late['blocked_pct']:>11.1f}%"
-)
-print(
-    f"  {'Mean sojourn time':<22}  {early['mean_sojourn']:>12.3f}  "
-    f"{late['mean_sojourn']:>12.3f}"
-)
-print()
-print(
-    f"  Late merge has {late['throughput'] / early['throughput']:.3f}x the throughput "
-    f"and {early['blocked_pct'] / late['blocked_pct']:.1f}x fewer blocked cars."
-)
-print()
-print("  Effect of lane buffer size on early-merge blocking rate:")
-print(f"  {'Buffer K':>8}  {'Early blocked %':>16}  {'Late blocked %':>15}")
-print("  " + "-" * 44)
-for k in [5, 10, 15, 20, 30]:
-    r_e = run_scenario(zipper=False, seed=SEED)
-    r_l = run_scenario(zipper=True, seed=SEED)
 
-    # Quick re-run with custom capacity
+sweep_rows = []
+for k in [5, 10, 15, 20, 30]:
     random.seed(SEED)
     env2 = Environment()
     st2: list[float] = []
@@ -216,4 +192,34 @@ for k in [5, 10, 15, 20, 30]:
     env3.run(until=SIM_TIME)
     t3 = len(st3) + len(bl3)
     lp = 100.0 * len(bl3) / t3 if t3 else 0.0
-    print(f"  {k:>8}  {ep:>15.1f}%  {lp:>14.1f}%")
+    sweep_rows.append({"buffer_k": k, "early_blocked_pct": ep, "late_blocked_pct": lp})
+
+df_sweep = pl.DataFrame(sweep_rows)
+
+print("Late (Zipper) Merge vs. Early (Courtesy) Merge")
+print(f"  Arrival rate: {ARRIVAL_RATE}/unit, merge service rate: {MERGE_RATE}/unit")
+print(f"  Utilisation rho = {RHO:.3f},  per-lane buffer = {LANE_CAPACITY}")
+print()
+print(df_main)
+print()
+print("Effect of lane buffer size on blocking rate:")
+print(df_sweep)
+
+df_plot = df_sweep.unpivot(
+    on=["early_blocked_pct", "late_blocked_pct"],
+    index="buffer_k",
+    variable_name="strategy",
+    value_name="blocked_pct",
+)
+chart = (
+    alt.Chart(df_plot)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("buffer_k:Q", title="Buffer size per lane (K)"),
+        y=alt.Y("blocked_pct:Q", title="Blocked cars (%)"),
+        color=alt.Color("strategy:N", title="Merge strategy"),
+        tooltip=["buffer_k:Q", "strategy:N", "blocked_pct:Q"],
+    )
+    .properties(title="Late Merge: Blocked Cars vs. Buffer Size")
+)
+chart.save(sys.argv[1])

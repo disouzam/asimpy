@@ -840,6 +840,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -932,34 +1072,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1206,6 +1318,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1303,6 +1426,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1371,6 +1505,14 @@ inventory (WIP) buffers in manufacturing cells.</p>
   waiting for work to appear).</li>
 </ul>
 <p>The simulation sweeps <span class="arithmatex">\(K\)</span> from 1 to 21 and reports Stage 2 idle fraction.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>Coefficient of variation.</strong> The coefficient of variation (CV) of a random variable <span class="arithmatex">\(X\)</span> with mean <span class="arithmatex">\(\mu\)</span> and standard deviation <span class="arithmatex">\(\sigma\)</span> is defined as <span class="arithmatex">\(c = \sigma / \mu\)</span>. It measures spread relative to the mean. A CV of 0 means the variable is deterministic — every value equals <span class="arithmatex">\(\mu\)</span>. A CV of 1 means the spread equals the mean (the exponential distribution has CV exactly 1). A CV greater than 1 means the distribution is bursty: occasional very large values dominate, even if most values are small. The squared CV <span class="arithmatex">\(c^2 = \sigma^2/\mu^2\)</span> appears frequently in queueing formulas.</p>
+<p><strong>Why high CV at Stage 1 creates bursts and droughts.</strong> With a hyperexponential service distribution (<span class="arithmatex">\(c_s^2 \gg 1\)</span>), Stage 1 sometimes completes several jobs in rapid succession (a burst) and sometimes spends a very long time on a single job (a drought). During a burst, jobs pile up in the buffer between stages. During a drought, Stage 2 exhausts the buffer and has to wait for Stage 1 to finish — wasting capacity even though the system is underloaded on average.</p>
+<p><strong>The buffer as a shock absorber.</strong> A buffer of capacity <span class="arithmatex">\(K\)</span> can hold at most <span class="arithmatex">\(K\)</span> jobs between the two stages. It absorbs burst output from Stage 1 and releases it steadily to Stage 2. With a small buffer, a burst overflows (blocking Stage 1) or a drought empties the buffer (starving Stage 2). As <span class="arithmatex">\(K\)</span> grows, both effects weaken and Stage 2 idle time falls. However, the marginal benefit of each extra unit of buffer decreases — a classic diminishing-returns relationship. Real factories choose <span class="arithmatex">\(K\)</span> to balance the cost of holding inventory against the cost of machine starvation.</p>
+<p><strong>Kingman's approximation.</strong> For a single-stage queue with general service and arrival distributions, the approximate mean waiting time is:</p>
+<div class="arithmatex">\[W_q \approx \frac{\rho}{1-\rho} \cdot \frac{c_a^2 + c_s^2}{2} \cdot \frac{1}{\mu}\]</div>
+<p>Here <span class="arithmatex">\(c_a^2\)</span> is the squared CV of inter-arrival times and <span class="arithmatex">\(c_s^2\)</span> is the squared CV of service times. Notice that the formula separates the utilization effect (the <span class="arithmatex">\(\rho/(1-\rho)\)</span> term) from the variability effect (the <span class="arithmatex">\((c_a^2 + c_s^2)/2\)</span> term). When Stage 1 has <span class="arithmatex">\(c_s^2 \gg 1\)</span>, wait time is far higher than the basic M/M/1 formula predicts, even at the same mean throughput. The mean alone does not tell you enough.</p>
+<p><strong>Supply-chain connection.</strong> In manufacturing, Stage 1 corresponds to a supplier and Stage 2 to a production line. High variability at the supplier forces the factory to hold large work-in-progress (WIP) buffers, tying up capital and floor space. The Toyota Production System explicitly targets CV reduction — making every process more deterministic through standardized work and small batch sizes — as the primary tool for shrinking necessary WIP. The math here explains exactly why: lower <span class="arithmatex">\(c_s^2\)</span> directly reduces <span class="arithmatex">\(W_q\)</span> and the required buffer size <span class="arithmatex">\(K\)</span>.</p>
 
 
 

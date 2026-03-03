@@ -2,7 +2,10 @@
 
 import random
 import statistics
+import sys
 
+import altair as alt
+import polars as pl
 
 # Road and commuter parameters
 N_COMMUTERS = 200  # total commuters
@@ -74,42 +77,43 @@ departure_slots = [
     for _ in range(N_COMMUTERS)
 ]
 
-print("Rush Hour Displacement Simulation")
-print(f"  {N_COMMUTERS} commuters, {N_SLOTS} slots, road capacity {ROAD_CAPACITY}/slot")
-print(f"  Overload delay: {OVERLOAD_DELAY}x base delay per unit above capacity")
-print()
-
-header = f"{'Day':>4}  {'Mean delay':>10}  {'Max slot count':>14}  Distribution (slots {PREFERRED_SLOT - 7}..{PREFERRED_SLOT + 7})"
-print(header)
-print("-" * len(header))
-
+rows = []
 for day in range(N_DAYS):
     travel_times = simulate_day(departure_slots)
-
-    # Mean travel time across all commuters
     mean_delay = statistics.mean(
         travel_times.get(s, BASE_DELAY) for s in departure_slots
     )
     dist = slot_distribution(departure_slots)
     max_count = max(dist)
-
-    # Print a compact bar chart of the central slots
-    bar_range = range(max(0, PREFERRED_SLOT - 7), min(N_SLOTS, PREFERRED_SLOT + 8))
-    bar = " ".join(f"{dist[s]:2}" for s in bar_range)
-
-    if day < 5 or day % 5 == 4:
-        print(f"{day + 1:>4}  {mean_delay:>10.3f}  {max_count:>14}  {bar}")
-
+    rows.append({"day": day + 1, "mean_delay": mean_delay, "max_slot_count": max_count})
     departure_slots = update_slots(departure_slots, travel_times, rng)
 
-print()
+df = pl.DataFrame(rows)
+
 final_dist = slot_distribution(departure_slots)
 peak_slot = max(range(N_SLOTS), key=lambda s: final_dist[s])
-print(f"  Initial peak slot: {PREFERRED_SLOT}")
+
+print("Rush Hour Displacement Simulation")
+print(f"  {N_COMMUTERS} commuters, {N_SLOTS} slots, road capacity {ROAD_CAPACITY}/slot")
+print(f"  Overload delay: {OVERLOAD_DELAY}x base delay per unit above capacity")
+print()
+print(df)
+print()
+print(f"Initial peak slot: {PREFERRED_SLOT}")
 print(
-    f"  Final peak slot:   {peak_slot} "
-    f"({'same' if peak_slot == PREFERRED_SLOT else 'shifted'})"
+    f"Final peak slot:   {peak_slot} ({'same' if peak_slot == PREFERRED_SLOT else 'shifted'})"
 )
 print()
-print("  Observation: the rush-hour peak flattens and shifts but does not")
-print("  disappear — individuals who escape congestion attract new followers.")
+print("Observation: the rush-hour peak flattens and shifts but does not disappear.")
+
+chart = (
+    alt.Chart(df)
+    .mark_line()
+    .encode(
+        x=alt.X("day:Q", title="Day"),
+        y=alt.Y("mean_delay:Q", title="Mean travel delay"),
+        tooltip=["day:Q", "mean_delay:Q", "max_slot_count:Q"],
+    )
+    .properties(title="Rush Hour Displacement: Mean Delay Over Time")
+)
+chart.save(sys.argv[1])

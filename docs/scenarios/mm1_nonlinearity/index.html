@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../littles_law/">
+        <link rel="prev" href="../late_merge/">
       
       
         <link rel="next" href="../pooled_vs_separate/">
@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -934,34 +1074,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1090,6 +1202,17 @@
     <span class="md-ellipsis">
       
         Key Takeaway
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
       
     </span>
   </a>
@@ -1305,6 +1428,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1393,6 +1527,19 @@ total sojourn time. Mean queue length <span class="arithmatex">\(L\)</span> is c
 <p>For any system approximated by an M/M/1 queue, <strong>never target utilization
 above 80–85%</strong> if low latency matters. The last few percent of throughput
 come at an enormous cost in queue length and wait time.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p>Let's build up the M/M/1 result from scratch so you can see exactly where the blow-up comes from.</p>
+<p><strong>The two rates.</strong> Call <span class="arithmatex">\(\lambda\)</span> (the Greek letter lambda) the arrival rate — for example, 3 customers per minute. Call <span class="arithmatex">\(\mu\)</span> (the Greek letter mu) the service rate — for example, 4 customers per minute. Both rates are averages; the actual gaps between events are random. The utilization <span class="arithmatex">\(\rho = \lambda / \mu\)</span> is simply the fraction of time the server is busy. With <span class="arithmatex">\(\lambda = 3\)</span> and <span class="arithmatex">\(\mu = 4\)</span>, we get <span class="arithmatex">\(\rho = 0.75\)</span>, meaning the server is occupied 75% of the time on average.</p>
+<p><strong>Stability.</strong> If <span class="arithmatex">\(\rho \geq 1\)</span>, customers arrive at least as fast as the server can handle them, so the queue grows without limit. We need <span class="arithmatex">\(\rho &lt; 1\)</span> for the system to be stable — for the queue to have a finite average length.</p>
+<p><strong>The geometric distribution.</strong> When arrivals and service times are both exponential (that's the "M/M" in M/M/1), the probability that exactly <span class="arithmatex">\(k\)</span> jobs are in the system at any moment is:</p>
+<div class="arithmatex">\[P(k) = (1 - \rho)\,\rho^k, \quad k = 0, 1, 2, \ldots\]</div>
+<p>This is a geometric distribution. It says the server is idle with probability <span class="arithmatex">\(1 - \rho\)</span>, has exactly 1 job with probability <span class="arithmatex">\((1-\rho)\rho\)</span>, has 2 jobs with probability <span class="arithmatex">\((1-\rho)\rho^2\)</span>, and so on. You can verify these sum to 1 using the standard geometric series <span class="arithmatex">\(\sum_{k=0}^{\infty} \rho^k = 1/(1-\rho)\)</span>.</p>
+<p><strong>Deriving <span class="arithmatex">\(L\)</span>.</strong> The mean number of jobs in the system is:</p>
+<div class="arithmatex">\[L = \sum_{k=0}^{\infty} k \cdot P(k) = (1-\rho) \sum_{k=0}^{\infty} k\,\rho^k\]</div>
+<p>From first-year calculus, you can show that <span class="arithmatex">\(\sum_{k=0}^{\infty} k\,x^k = x/(1-x)^2\)</span> for <span class="arithmatex">\(|x| &lt; 1\)</span> (differentiate both sides of the geometric series with respect to <span class="arithmatex">\(x\)</span>). Substituting <span class="arithmatex">\(x = \rho\)</span>:</p>
+<div class="arithmatex">\[L = (1-\rho) \cdot \frac{\rho}{(1-\rho)^2} = \frac{\rho}{1-\rho}\]</div>
+<p><strong>Why the denominator causes blow-up.</strong> As <span class="arithmatex">\(\rho \to 1\)</span>, the denominator <span class="arithmatex">\((1-\rho)\)</span> approaches zero, so <span class="arithmatex">\(L \to \infty\)</span>. Think of <span class="arithmatex">\((1-\rho)\)</span> as the server's spare capacity. When spare capacity is small, any random burst of arrivals takes a very long time to drain. The server is so busy that it can never fully "catch up" before the next burst arrives.</p>
+<p><strong>A concrete analogy.</strong> Imagine a single supermarket checkout lane. Suppose the cashier scans items at exactly the same average rate that customers arrive. On average everything is balanced — but averages hide randomness. Sometimes three customers arrive in quick succession. The cashier works through them eventually, but by then two more have joined. The queue keeps growing because there is no cushion of spare capacity to absorb unlucky stretches. Push <span class="arithmatex">\(\rho\)</span> to 0.9 and that cushion shrinks to just 10%; the queue becomes nine times as long as at <span class="arithmatex">\(\rho = 0.5\)</span>. The math shows this isn't a gradual worsening — it's an explosion driven by the <span class="arithmatex">\((1-\rho)\)</span> term in the denominator.</p>
 
 
 

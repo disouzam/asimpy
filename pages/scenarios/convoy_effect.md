@@ -62,3 +62,23 @@ Jobs are placed in a `Queue(priority=True)` for SJF (tupled as
 for FIFO (tupled as `(job_id, service_time)` to preserve arrival order).
 The same hyperexponential service-time generator (90% short, 10% long) is
 used in both runs.
+
+## Understanding the Math
+
+**The second moment.** For a random variable $S$ representing service time, the second moment is $E[S^2]$. Recall from your statistics course that variance is $\text{Var}(S) = E[S^2] - (E[S])^2$, which rearranges to:
+
+$$E[S^2] = \text{Var}(S) + (E[S])^2$$
+
+This means high variance inflates $E[S^2]$ even if the mean $E[S]$ stays fixed. Doubling the spread of service times can quadruple $E[S^2]$, even with the same average service time.
+
+**Why variance of service time hurts.** Imagine a FIFO server handling jobs that are either 0.1 minutes or 10 minutes long, with 90% being short and 10% being long. The mean service time is $0.9 \times 0.1 + 0.1 \times 10 = 1.09$ minutes, so utilization $\rho = \lambda / \mu$ might be modest. But when a 10-minute job starts, every job arriving during those 10 minutes must join the queue and wait. The longer $E[S^2]$, the more average work sits ahead of each arriving job.
+
+**The Pollaczek–Khinchine formula.** The mean time a job spends waiting (not counting its own service time) in a FIFO single-server queue is:
+
+$$W_q = \frac{\lambda \cdot E[S^2]}{2(1 - \rho)}$$
+
+Here $\lambda$ is the arrival rate, $E[S^2]$ is the second moment of service time, and $\rho = \lambda \cdot E[S]$ is the server utilization. You do not need to derive this — just notice its structure. Both $\lambda$ and $E[S^2]$ appear in the numerator, so more variance means more waiting even at the same $\rho$. The $(1-\rho)$ denominator is the familiar blow-up term from M/M/1.
+
+**The convoy metaphor.** Picture a one-lane road with one slow truck and many fast cars. Every car behind the truck must drive at truck speed; no overtaking allowed. The truck is the long job; the cars are the short jobs stuck behind it in FIFO order. SJF is like a passing lane: fast cars jump ahead of the truck and reach their destination much sooner. The truck itself arrives at the same time either way, but the total delay experienced by all vehicles plummets.
+
+**SJF in practice.** The server usually cannot know job sizes before they start. However, operating systems estimate job length from past behavior and assign priorities accordingly. Web servers use multiplexing so that a slow response to one client does not block fast responses to others. Database query planners reorder operations to run cheaper queries first. All of these are approximations to the SJF ideal, capturing much of the benefit even without perfect foreknowledge of job sizes.

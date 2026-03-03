@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-475fd7cb7f0aa77dbdc9246e2db1c9c0"}, "mark": {"type": "line"}, "encoding": {"tooltip": [{"field": "day", "type": "quantitative"}, {"field": "mean_delay", "type": "quantitative"}, {"field": "max_slot_count", "type": "quantitative"}], "x": {"field": "day", "title": "Day", "type": "quantitative"}, "y": {"field": "mean_delay", "title": "Mean travel delay", "type": "quantitative"}}, "title": "Rush Hour Displacement: Mean Delay Over Time", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-475fd7cb7f0aa77dbdc9246e2db1c9c0": [{"day": 1, "mean_delay": 3.1465, "max_slot_count": 48}, {"day": 2, "mean_delay": 2.6155, "max_slot_count": 44}, {"day": 3, "mean_delay": 2.28025, "max_slot_count": 41}, {"day": 4, "mean_delay": 1.96225, "max_slot_count": 34}, {"day": 5, "mean_delay": 1.78675, "max_slot_count": 31}, {"day": 6, "mean_delay": 1.94275, "max_slot_count": 42}, {"day": 7, "mean_delay": 1.7125, "max_slot_count": 37}, {"day": 8, "mean_delay": 1.3705, "max_slot_count": 26}, {"day": 9, "mean_delay": 1.47925, "max_slot_count": 29}, {"day": 10, "mean_delay": 1.381, "max_slot_count": 29}, {"day": 11, "mean_delay": 1.53475, "max_slot_count": 30}, {"day": 12, "mean_delay": 1.2722499999999999, "max_slot_count": 26}, {"day": 13, "mean_delay": 1.27975, "max_slot_count": 27}, {"day": 14, "mean_delay": 1.477, "max_slot_count": 29}, {"day": 15, "mean_delay": 1.3, "max_slot_count": 27}, {"day": 16, "mean_delay": 1.1005, "max_slot_count": 23}, {"day": 17, "mean_delay": 1.105, "max_slot_count": 24}, {"day": 18, "mean_delay": 1.2115, "max_slot_count": 25}, {"day": 19, "mean_delay": 1.1785, "max_slot_count": 25}, {"day": 20, "mean_delay": 1.23325, "max_slot_count": 25}, {"day": 21, "mean_delay": 1.2205, "max_slot_count": 26}, {"day": 22, "mean_delay": 1.1815, "max_slot_count": 25}, {"day": 23, "mean_delay": 1.16575, "max_slot_count": 25}, {"day": 24, "mean_delay": 1.0675, "max_slot_count": 23}, {"day": 25, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 26, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 27, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 28, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 29, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 30, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 31, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 32, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 33, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 34, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 35, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 36, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 37, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 38, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 39, "mean_delay": 1.0, "max_slot_count": 20}, {"day": 40, "mean_delay": 1.0, "max_slot_count": 20}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

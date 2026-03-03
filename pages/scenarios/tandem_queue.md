@@ -63,3 +63,19 @@ inventory (WIP) buffers in manufacturing cells.
   waiting for work to appear).
 
 The simulation sweeps $K$ from 1 to 21 and reports Stage 2 idle fraction.
+
+## Understanding the Math
+
+**Coefficient of variation.** The coefficient of variation (CV) of a random variable $X$ with mean $\mu$ and standard deviation $\sigma$ is defined as $c = \sigma / \mu$. It measures spread relative to the mean. A CV of 0 means the variable is deterministic — every value equals $\mu$. A CV of 1 means the spread equals the mean (the exponential distribution has CV exactly 1). A CV greater than 1 means the distribution is bursty: occasional very large values dominate, even if most values are small. The squared CV $c^2 = \sigma^2/\mu^2$ appears frequently in queueing formulas.
+
+**Why high CV at Stage 1 creates bursts and droughts.** With a hyperexponential service distribution ($c_s^2 \gg 1$), Stage 1 sometimes completes several jobs in rapid succession (a burst) and sometimes spends a very long time on a single job (a drought). During a burst, jobs pile up in the buffer between stages. During a drought, Stage 2 exhausts the buffer and has to wait for Stage 1 to finish — wasting capacity even though the system is underloaded on average.
+
+**The buffer as a shock absorber.** A buffer of capacity $K$ can hold at most $K$ jobs between the two stages. It absorbs burst output from Stage 1 and releases it steadily to Stage 2. With a small buffer, a burst overflows (blocking Stage 1) or a drought empties the buffer (starving Stage 2). As $K$ grows, both effects weaken and Stage 2 idle time falls. However, the marginal benefit of each extra unit of buffer decreases — a classic diminishing-returns relationship. Real factories choose $K$ to balance the cost of holding inventory against the cost of machine starvation.
+
+**Kingman's approximation.** For a single-stage queue with general service and arrival distributions, the approximate mean waiting time is:
+
+$$W_q \approx \frac{\rho}{1-\rho} \cdot \frac{c_a^2 + c_s^2}{2} \cdot \frac{1}{\mu}$$
+
+Here $c_a^2$ is the squared CV of inter-arrival times and $c_s^2$ is the squared CV of service times. Notice that the formula separates the utilization effect (the $\rho/(1-\rho)$ term) from the variability effect (the $(c_a^2 + c_s^2)/2$ term). When Stage 1 has $c_s^2 \gg 1$, wait time is far higher than the basic M/M/1 formula predicts, even at the same mean throughput. The mean alone does not tell you enough.
+
+**Supply-chain connection.** In manufacturing, Stage 1 corresponds to a supplier and Stage 2 to a production line. High variability at the supplier forces the factory to hold large work-in-progress (WIP) buffers, tying up capital and floor space. The Toyota Production System explicitly targets CV reduction — making every process more deterministic through standardized work and small batch sizes — as the primary tool for shrinking necessary WIP. The math here explains exactly why: lower $c_s^2$ directly reduces $W_q$ and the required buffer size $K$.

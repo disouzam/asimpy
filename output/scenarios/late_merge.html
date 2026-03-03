@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-862e407c500abb23e8ce05815253a86e"}, "mark": {"type": "line", "point": true}, "encoding": {"color": {"field": "strategy", "title": "Merge strategy", "type": "nominal"}, "tooltip": [{"field": "buffer_k", "type": "quantitative"}, {"field": "strategy", "type": "nominal"}, {"field": "blocked_pct", "type": "quantitative"}], "x": {"field": "buffer_k", "title": "Buffer size per lane (K)", "type": "quantitative"}, "y": {"field": "blocked_pct", "title": "Blocked cars (%)", "type": "quantitative"}}, "title": "Late Merge: Blocked Cars vs. Buffer Size", "$schema": "https://vega.github.io/schema/vega-lite/v6.1.0.json", "datasets": {"data-862e407c500abb23e8ce05815253a86e": [{"buffer_k": 5, "strategy": "early_blocked_pct", "blocked_pct": 10.536165264630535}, {"buffer_k": 10, "strategy": "early_blocked_pct", "blocked_pct": 5.4519601137549945}, {"buffer_k": 15, "strategy": "early_blocked_pct", "blocked_pct": 3.0251131262506985}, {"buffer_k": 20, "strategy": "early_blocked_pct", "blocked_pct": 1.9342394635324656}, {"buffer_k": 30, "strategy": "early_blocked_pct", "blocked_pct": 0.8315895807778338}, {"buffer_k": 5, "strategy": "late_blocked_pct", "blocked_pct": 5.384268853049824}, {"buffer_k": 10, "strategy": "late_blocked_pct", "blocked_pct": 1.9189189189189189}, {"buffer_k": 15, "strategy": "late_blocked_pct", "blocked_pct": 0.7400571780117975}, {"buffer_k": 20, "strategy": "late_blocked_pct", "blocked_pct": 0.4149377593360996}, {"buffer_k": 30, "strategy": "late_blocked_pct", "blocked_pct": 0.1242258389745067}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

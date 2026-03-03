@@ -2,6 +2,10 @@
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Resource
 
@@ -61,18 +65,44 @@ def simulate(
 
 rhos = [0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95]
 
-print(f"{'rho':>6}  {'Theory L':>10}  {'Sim L':>10}  {'% error':>8}")
-print("-" * 44)
+sweep_rows = []
 for rho in rhos:
     sim_L, theory_L = simulate(rho)
     pct = 100.0 * (sim_L - theory_L) / theory_L
-    print(f"{rho:>6.2f}  {theory_L:>10.3f}  {sim_L:>10.3f}  {pct:>7.1f}%")
+    sweep_rows.append(
+        {"rho": rho, "theory_L": theory_L, "sim_L": sim_L, "pct_error": pct}
+    )
 
-print()
-print("Marginal increase in L per 0.1 step in rho (theory):")
+df_sweep = pl.DataFrame(sweep_rows)
+print("M/M/1 nonlinearity: simulated vs. theoretical queue length")
+print(df_sweep)
+
+marginal_rows = []
 prev_L, prev_rho = None, None
 for rho in [0.5, 0.6, 0.7, 0.8, 0.9]:
     theory_L = rho / (1.0 - rho)
     if prev_L is not None:
-        print(f"  rho {prev_rho:.1f} -> {rho:.1f}: +{theory_L - prev_L:.3f}")
+        marginal_rows.append(
+            {"rho_from": prev_rho, "rho_to": rho, "delta_L": theory_L - prev_L}
+        )
     prev_L, prev_rho = theory_L, rho
+
+df_marginal = pl.DataFrame(marginal_rows)
+print("\nMarginal increase in L per 0.1 step in rho (theory):")
+print(df_marginal)
+
+df_plot = df_sweep.unpivot(
+    on=["theory_L", "sim_L"], index="rho", variable_name="source", value_name="L"
+)
+chart = (
+    alt.Chart(df_plot)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("rho:Q", title="Utilization (ρ)"),
+        y=alt.Y("L:Q", title="Mean queue length (L)"),
+        color=alt.Color("source:N", title="Source"),
+        tooltip=["rho:Q", "source:N", "L:Q"],
+    )
+    .properties(title="M/M/1 Queue Length vs. Utilization")
+)
+chart.save(sys.argv[1])

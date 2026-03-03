@@ -7,6 +7,10 @@ The DES clock advances one unit per wave.
 
 import math
 import random
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process
 
@@ -101,55 +105,51 @@ def simulate(has_shortcut: bool) -> list:
 hist_no = simulate(has_shortcut=False)
 hist_yes = simulate(has_shortcut=True)
 
+df_no = pl.DataFrame(hist_no)
+df_yes = pl.DataFrame(hist_yes)
 
-def fmt(h: dict, shortcut: bool) -> str:
-    if shortcut:
-        return (
-            f"  {h['round']:>6.0f}  {h['n_top']:>6}  {h['n_bot']:>6}  "
-            f"{h['n_short']:>8}  {h['mean']:>8.2f}"
-        )
-    return f"  {h['round']:>6.0f}  {h['n_top']:>6}  {h['n_bot']:>6}  {h['mean']:>8.2f}"
-
-
-print("Braess's Paradox")
-print(
-    f"  {N_DRIVERS} drivers, congested link delay = n/capacity (capacity={CAPACITY:.0f})"
-)
-print(f"  Constant link delay = {CONST_DELAY} (links AT and SB)")
-print()
-
-print("Without shortcut — convergence to equilibrium:")
-print(f"  {'Round':>6}  {'n_top':>6}  {'n_bot':>6}  {'Mean T':>8}")
-for h in list(hist_no[::10]) + [hist_no[-1]]:
-    print(fmt(h, shortcut=False))
-
-print()
-print("With shortcut — convergence to equilibrium:")
-print(f"  {'Round':>6}  {'n_top':>6}  {'n_bot':>6}  {'n_short':>8}  {'Mean T':>8}")
-for h in list(hist_yes[::10]) + [hist_yes[-1]]:
-    print(fmt(h, shortcut=True))
-
-print()
 eq_no = hist_no[-1]["mean"]
 eq_yes = hist_yes[-1]["mean"]
-print(f"  Nash equilibrium travel time WITHOUT shortcut: {eq_no:.2f}")
-print(f"  Nash equilibrium travel time WITH shortcut:    {eq_yes:.2f}")
-print(
-    f"  Adding the shortcut increased travel time by "
-    f"{eq_yes - eq_no:.2f} units "
-    f"({100 * (eq_yes / eq_no - 1):.1f}% worse for every driver)"
-)
-
-print()
-print("Theoretical predictions:")
 n_half = N_DRIVERS / 2
 t_theory_no = n_half / CAPACITY + CONST_DELAY
 t_theory_yes = N_DRIVERS / CAPACITY + N_DRIVERS / CAPACITY
+
+print("Braess's Paradox")
+print(f"  {N_DRIVERS} drivers, capacity={CAPACITY:.0f}, constant delay={CONST_DELAY}")
+print()
+print("Without shortcut:")
+print(df_no)
+print()
+print("With shortcut:")
+print(df_yes)
+print()
+print(f"Nash equilibrium WITHOUT shortcut: {eq_no:.2f}")
+print(f"Nash equilibrium WITH shortcut:    {eq_yes:.2f}")
 print(
-    f"  Without shortcut (50/50 split): "
-    f"{n_half:.0f}/{CAPACITY:.0f} + {CONST_DELAY:.0f} = {t_theory_no:.2f}"
+    f"Adding the shortcut increased travel time by "
+    f"{eq_yes - eq_no:.2f} units "
+    f"({100 * (eq_yes / eq_no - 1):.1f}% worse for every driver)"
 )
-print(
-    f"  With shortcut (all on SA→AB→BT): "
-    f"{N_DRIVERS}/{CAPACITY:.0f} + {N_DRIVERS}/{CAPACITY:.0f} = {t_theory_yes:.2f}"
+print()
+print(f"Theory WITHOUT shortcut (50/50 split): {t_theory_no:.2f}")
+print(f"Theory WITH shortcut (all on SA→AB→BT): {t_theory_yes:.2f}")
+
+df_no_plot = df_no.select(["round", "mean"]).with_columns(
+    pl.lit("without shortcut").alias("scenario")
 )
+df_yes_plot = df_yes.select(["round", "mean"]).with_columns(
+    pl.lit("with shortcut").alias("scenario")
+)
+df_plot = pl.concat([df_no_plot, df_yes_plot])
+chart = (
+    alt.Chart(df_plot)
+    .mark_line()
+    .encode(
+        x=alt.X("round:Q", title="Round"),
+        y=alt.Y("mean:Q", title="Mean travel time"),
+        color=alt.Color("scenario:N", title="Network"),
+        tooltip=["round:Q", "scenario:N", "mean:Q"],
+    )
+    .properties(title="Braess's Paradox: Convergence to Nash Equilibrium")
+)
+chart.save(sys.argv[1])

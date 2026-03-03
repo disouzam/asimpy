@@ -2,6 +2,10 @@
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Resource
 
@@ -155,7 +159,7 @@ def verify(
     sojourn_times: list,
     samples: list,
     arrival_rate: float,
-):
+) -> dict:
     Monitor(env, in_system, samples)
     env.run(until=SIM_TIME)
     L_direct = statistics.mean(samples)
@@ -164,33 +168,28 @@ def verify(
     lam = n / SIM_TIME  # observed throughput
     L_little = lam * W  # Little's Law prediction
     error = 100.0 * (L_little - L_direct) / L_direct
-    print(f"  {label}")
-    print(f"    Observed throughput lambda = {lam:.4f}  (target {arrival_rate:.4f})")
-    print(f"    Mean sojourn time   W      = {W:.4f}")
-    print(f"    L (direct sample)          = {L_direct:.4f}")
-    print(f"    L = lambda * W             = {L_little:.4f}")
-    print(f"    Relative error             = {error:.2f}%")
-    print()
+    return {
+        "label": label,
+        "lambda_obs": lam,
+        "mean_W": W,
+        "L_direct": L_direct,
+        "L_little": L_little,
+        "error_pct": error,
+    }
 
+
+rows = []
 
 random.seed(SEED)
-
-print("Little's Law verification: L = lambda * W")
-print("=" * 56)
-print()
-
-# M/M/1 at rho = 0.7
 lam1, mu1 = 0.7, 1.0
 in_sys1: list[int] = [0]
 soj1: list[float] = []
 smp1: list[int] = []
 env1 = Environment()
-Resource(env1, capacity=1)
 srv1 = Resource(env1, capacity=1)
 MM1Arrivals(env1, lam1, srv1, in_sys1, soj1)
-verify("M/M/1 (rho=0.70, 1 server)", env1, in_sys1, soj1, smp1, lam1)
+rows.append(verify("M/M/1 (rho=0.70, 1 server)", env1, in_sys1, soj1, smp1, lam1))
 
-# M/D/1 at rho = 0.7  (deterministic service time = 1.0)
 random.seed(SEED)
 lam2, svc2 = 0.7, 1.0
 in_sys2: list[int] = [0]
@@ -199,9 +198,10 @@ smp2: list[int] = []
 env2 = Environment()
 srv2 = Resource(env2, capacity=1)
 MD1Arrivals(env2, lam2, svc2, srv2, in_sys2, soj2)
-verify("M/D/1 (rho=0.70, deterministic service)", env2, in_sys2, soj2, smp2, lam2)
+rows.append(
+    verify("M/D/1 (rho=0.70, deterministic service)", env2, in_sys2, soj2, smp2, lam2)
+)
 
-# M/M/3 at rho = 0.8 per server  =>  lambda = 0.8 * 3 = 2.4
 random.seed(SEED)
 lam3 = 2.4
 in_sys3: list[int] = [0]
@@ -210,4 +210,30 @@ smp3: list[int] = []
 env3 = Environment()
 srv3 = Resource(env3, capacity=3)
 MM3Arrivals(env3, lam3, srv3, in_sys3, soj3)
-verify("M/M/3 (rho=0.80 per server, 3 servers)", env3, in_sys3, soj3, smp3, lam3)
+rows.append(
+    verify("M/M/3 (rho=0.80 per server, 3 servers)", env3, in_sys3, soj3, smp3, lam3)
+)
+
+df = pl.DataFrame(rows)
+print("Little's Law verification: L = lambda * W")
+print(df)
+
+points = (
+    alt.Chart(df)
+    .mark_point(size=100, filled=True)
+    .encode(
+        x=alt.X("L_direct:Q", title="L (direct sample)"),
+        y=alt.Y("L_little:Q", title="L = λW (Little's Law)"),
+        color=alt.Color("label:N", title="Configuration"),
+        tooltip=["label:N", "L_direct:Q", "L_little:Q", "error_pct:Q"],
+    )
+)
+max_val: float = max(df["L_direct"].to_list()) * 1.1
+diagonal = (
+    alt.Chart(pl.DataFrame({"x": [0.0, max_val], "y": [0.0, max_val]}))
+    .mark_line(color="gray", strokeDash=[4, 4])
+    .encode(x="x:Q", y="y:Q")
+)
+(diagonal + points).properties(title="Little's Law: Direct Sample vs. λW").save(
+    sys.argv[1]
+)

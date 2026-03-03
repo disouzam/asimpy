@@ -59,3 +59,17 @@ Two simulations run with identical seeds:
    `random.choice` to pick a server and cannot switch even if it is slower.
 
 Mean sojourn time is collected with Little's Law $W = L/\lambda$.
+
+## Understanding the Math
+
+**What variance measures.** The variance $\sigma^2$ of a random variable tells you how spread out its values are. If a random variable has low variance, almost every observation is close to the mean. High variance means the values are scattered widely. In queueing, high variance in arrival times means customers sometimes arrive in bunches and sometimes leave long gaps — and that unpredictability is costly.
+
+**The idle-time problem.** With two separate queues, the randomness of arrivals can leave one server standing idle while customers queue in the other lane. That idle time is wasted capacity: the idle server could have helped, but customers who already chose the busy lane cannot switch. Pooling a single line into both servers eliminates this mismatch — a free server immediately picks up the next person in line, regardless of which "lane" that person would have joined.
+
+**A simple example.** Suppose each server handles exactly one job every 2 minutes, and jobs arrive at exactly one every 2 minutes — so $\rho = 1/2$. Now suppose two jobs happen to arrive at the same instant. With separate queues, one server gets both jobs and takes 4 minutes total; the other server sits idle for 2 minutes. With a pooled queue, one job goes to each server and both finish in 2 minutes. No wasted capacity, shorter total wait.
+
+**Why pooling always wins.** Two separate M/M/1 queues each running at utilization $\rho$ have mean sojourn time $W_{\text{sep}} = 1/(\mu(1-\rho))$. A pooled M/M/2 queue with the same total arrival rate has strictly lower mean sojourn time for every value of $0 < \rho < 1$. The proof uses the Erlang-C formula, but the intuition is simpler: pooling converts two independent random processes into one, and the combined queue can exploit any idle capacity instantly. At $\rho = 0.8$, separate queues give roughly twice the mean wait of a pooled queue.
+
+**Connection to variance reduction.** Think of the service delivered in a time window by two separate servers as two independent random variables $X_1$ and $X_2$. Their average $(X_1 + X_2)/2$ has variance $\sigma^2/2$ — half the variance of either component alone. Pooling achieves something similar: by combining demand into one stream served by both servers, the system smooths out random fluctuations. The pooled queue is, in effect, averaging over both servers' idle periods instead of locking each idle period to a single lane.
+
+**Rule of thumb.** At $\rho = 0.8$, separate queues produce roughly double the mean wait of a pooled queue. This factor grows as $\rho$ increases, because the $(1-\rho)$ term in the denominator amplifies any wasted capacity. The lesson: whenever you can route demand flexibly to a shared resource, do it.

@@ -37,12 +37,14 @@ exclude_lines = [
 
 [dependency-groups]
 dev = [
+    "altair>=6.0.0",
     "build>=1.4.0",
     "coverage>=7.13.2",
     "markdown-include>=0.8.1",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.7.1",
     "mkdocstrings[python]>=1.0.0",
+    "polars>=1.0.0",
     "pytest>=9.0.2",
     "ruff>=0.14.10",
     "twine>=6.2.0",

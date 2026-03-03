@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -1018,6 +1158,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1042,34 +1193,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1317,6 +1440,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1405,6 +1539,17 @@ arrive uniformly within it, giving expected wait <span class="arithmatex">\((\mu
 After the simulation, passenger wait times are estimated by sampling
 <span class="arithmatex">\(N = 20{,}000\)</span> uniformly random arrival times and finding the next bus for
 each, without needing explicit <code>Passenger</code> processes.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>Length-biased sampling.</strong> Suppose buses run on an irregular schedule where gaps between buses are either 2 minutes or 18 minutes, each with probability 1/2. The mean gap is <span class="arithmatex">\(\mu = (2 + 18)/2 = 10\)</span> minutes. Now ask: if you arrive at a completely random moment, which gap are you most likely to land inside?</p>
+<p>A 2-minute gap occupies only 2 minutes on the clock, but an 18-minute gap occupies 18. Out of every 20 minutes of clock time on average, 2 minutes belong to a short gap and 18 to a long one. So a random arrival lands in a short gap with probability <span class="arithmatex">\(2/(2+18) = 1/10\)</span> and in a long gap with probability <span class="arithmatex">\(18/20 = 9/10\)</span>. The expected gap length you experience is:</p>
+<div class="arithmatex">\[E[\text{gap experienced}] = \frac{1}{10} \cdot 2 + \frac{9}{10} \cdot 18 = 0.2 + 16.2 = 16.4 \text{ minutes}\]</div>
+<p>That is far above the mean gap of 10 minutes. You are disproportionately likely to land inside a long gap simply because it takes up more time.</p>
+<p><strong>The wait formula.</strong> Once you are inside a gap, you arrive uniformly within it, so on average you land in the middle. Your expected wait is half the gap length you experience. The full formula is:</p>
+<div class="arithmatex">\[E[\text{wait}] = \frac{\mu}{2} + \frac{\sigma^2}{2\mu}\]</div>
+<p>Here <span class="arithmatex">\(\mu\)</span> is the mean gap and <span class="arithmatex">\(\sigma^2 = \text{Var}[\text{gap}]\)</span> is the variance of gap lengths. The first term, <span class="arithmatex">\(\mu/2\)</span>, is what you would get if every gap were exactly <span class="arithmatex">\(\mu\)</span> (deterministic buses — arrive in the middle every time). The second term, <span class="arithmatex">\(\sigma^2/(2\mu)\)</span>, is the extra waiting from length-biased sampling. It is always non-negative, so irregular buses always make you wait longer than regular buses with the same mean headway.</p>
+<p><strong>Why variance matters.</strong> The variance <span class="arithmatex">\(\sigma^2\)</span> measures how spread out the gap sizes are. A perfectly regular bus schedule has <span class="arithmatex">\(\sigma^2 = 0\)</span> and gives the naive answer <span class="arithmatex">\(\mu/2\)</span>. An exponentially distributed schedule has <span class="arithmatex">\(\sigma^2 = \mu^2\)</span>, which doubles the expected wait to <span class="arithmatex">\(\mu\)</span>. More irregular buses, higher penalty.</p>
+<p><strong>Connecting to expected values.</strong> The formula arises from a standard result: the expected length of the gap containing a random arrival is <span class="arithmatex">\(\mu + \sigma^2/\mu\)</span>. You can think of this as the mean gap plus a correction term proportional to the variance divided by the mean. Dividing by 2 (uniform arrival within the gap) gives the wait formula above.</p>
+<p><strong>Everyday version.</strong> You have experienced this at the supermarket. Long checkout lines are more visible than short ones simply because they contain more people. You are statistically more likely to join a long line — not because you are unlucky, but because long lines have more slots to join. The same length-biased sampling is at work.</p>
 
 
 

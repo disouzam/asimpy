@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -934,34 +1074,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1180,6 +1292,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1361,6 +1484,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1439,6 +1573,14 @@ is the mean residual work seen by an arriving customer. The ratio
    their priority key until it falls below the H threshold and they move into
    the server's feed queue.</li>
 </ol>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>Utilization of each class.</strong> Let <span class="arithmatex">\(\lambda_H\)</span> be the arrival rate of high-priority jobs (H) and <span class="arithmatex">\(\mu_H\)</span> be their service rate. The utilization contributed by H jobs alone is <span class="arithmatex">\(\rho_H = \lambda_H / \mu_H\)</span> — the fraction of server time that H jobs would consume if they were the only class. Similarly, <span class="arithmatex">\(\rho_L = \lambda_L / \mu_L\)</span> for low-priority jobs. The total utilization is <span class="arithmatex">\(\rho = \rho_H + \rho_L\)</span>. Requiring <span class="arithmatex">\(\rho &lt; 1\)</span> means the server has enough capacity for both classes on average.</p>
+<p><strong>Why "on average" is not enough.</strong> Even when <span class="arithmatex">\(\rho &lt; 1\)</span>, randomness creates bursts of H arrivals. During a burst, the server is continuously occupied by H jobs, and L jobs must wait in the background. The mean wait for low-priority jobs in a non-preemptive priority queue is:</p>
+<div class="arithmatex">\[W_L = \frac{R_0}{(1 - \rho_H)(1 - \rho_H - \rho_L)}\]</div>
+<p>where <span class="arithmatex">\(R_0\)</span> is the mean residual work in the system when a job arrives. The critical observation is the factor <span class="arithmatex">\((1 - \rho_H)\)</span> in the denominator. As <span class="arithmatex">\(\rho_H \to 1\)</span>, this factor approaches zero and <span class="arithmatex">\(W_L \to \infty\)</span> — even if <span class="arithmatex">\(\rho_L\)</span> stays small and the total load <span class="arithmatex">\(\rho\)</span> is comfortably below 1.</p>
+<p><strong>Intuition with a simple example.</strong> Suppose H jobs arrive in random bursts. During a burst, the server never pauses for L jobs. An L job unlucky enough to arrive at the start of a long burst must wait for every H job in that burst to be served before getting its turn. As bursts grow more frequent (larger <span class="arithmatex">\(\rho_H\)</span>), the expected burst length grows, and with it the expected wait for that unlucky L job. The math confirms: starvation is a real risk at moderate <span class="arithmatex">\(\rho_H\)</span>, not just at extreme loads.</p>
+<p><strong>What aging does.</strong> Aging assigns each waiting L job a maximum patience time <span class="arithmatex">\(T_{\max}\)</span>. After waiting <span class="arithmatex">\(T_{\max}\)</span>, the job is promoted to high priority. This caps the worst-case wait: no L job can wait longer than <span class="arithmatex">\(T_{\max}\)</span> plus one service time. Mathematically, the effective <span class="arithmatex">\(W_L\)</span> is bounded by <span class="arithmatex">\(T_{\max} + 1/\mu_L\)</span>.</p>
+<p><strong>The trade-off.</strong> Without aging, <span class="arithmatex">\(W_L\)</span> can be infinite when <span class="arithmatex">\(\rho_H\)</span> is large. With aging, <span class="arithmatex">\(W_L \leq T_{\max} + 1/\mu_L\)</span>, but during promotion events the effective <span class="arithmatex">\(\rho_H\)</span> spikes temporarily, increasing <span class="arithmatex">\(W_H\)</span>. Choosing <span class="arithmatex">\(T_{\max}\)</span> is a design decision: a small <span class="arithmatex">\(T_{\max}\)</span> protects L jobs but forces more promotions and penalizes H jobs more often; a large <span class="arithmatex">\(T_{\max}\)</span> is kinder to H jobs but allows L jobs to wait longer. There is no setting that simultaneously minimizes both — the trade-off is fundamental.</p>
 
 
 

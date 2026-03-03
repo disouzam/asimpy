@@ -12,7 +12,7 @@
         <link rel="prev" href="../inspectors_paradox/">
       
       
-        <link rel="next" href="../littles_law/">
+        <link rel="next" href="../mm1_nonlinearity/">
       
       
         
@@ -842,6 +842,146 @@
   
   
     <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../braess_paradox/" class="md-nav__link">
         
   
@@ -1040,38 +1180,21 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1305,6 +1428,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1383,6 +1517,15 @@ pass through rather than being turned away.</p>
 </ul>
 <p>Both systems have the same total arrival rate <span class="arithmatex">\(\lambda\)</span> and merge service
 rate <span class="arithmatex">\(\mu\)</span>.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>Blocking probability.</strong> When a new car arrives and finds the lane buffer completely full, the car cannot enter and is turned away. We call this being "blocked." The blocking probability <span class="arithmatex">\(P_{\text{block}}\)</span> is the long-run fraction of all arriving cars that get blocked. A higher blocking probability means more cars are lost to the system and throughput falls.</p>
+<p><strong>The finite-buffer formula.</strong> For a queue with random arrivals, exponential service, a single server, and a buffer that holds at most <span class="arithmatex">\(K\)</span> cars (the M/M/1/K model), the blocking probability is:</p>
+<div class="arithmatex">\[P_{\text{block}} = \frac{(1-\rho)\,\rho^K}{1 - \rho^{K+1}}\]</div>
+<p>Here <span class="arithmatex">\(\rho = \lambda/\mu\)</span> is the utilization — the ratio of arrival rate <span class="arithmatex">\(\lambda\)</span> to service rate <span class="arithmatex">\(\mu\)</span>. Notice that the numerator contains <span class="arithmatex">\(\rho^K\)</span>. Because <span class="arithmatex">\(\rho &lt; 1\)</span>, increasing <span class="arithmatex">\(K\)</span> by 1 multiplies the numerator by <span class="arithmatex">\(\rho &lt; 1\)</span>, shrinking <span class="arithmatex">\(P_{\text{block}}\)</span> faster than linearly. Each extra slot in the buffer is more valuable than a simple linear reduction would suggest.</p>
+<p><strong>Early vs. late merge in terms of <span class="arithmatex">\(K\)</span>.</strong> Early merging creates a single queue with buffer <span class="arithmatex">\(K\)</span> — one lane's worth of space. Late merging uses both lanes up to the merge point, creating an effective buffer of <span class="arithmatex">\(2K\)</span> cars total. Plugging <span class="arithmatex">\(2K\)</span> into the formula instead of <span class="arithmatex">\(K\)</span> replaces <span class="arithmatex">\(\rho^K\)</span> with <span class="arithmatex">\(\rho^{2K} = (\rho^K)^2\)</span>. Since <span class="arithmatex">\(\rho^K &lt; 1\)</span>, squaring it makes it much smaller. This is the mathematical reason why doubling the buffer dramatically reduces blocking.</p>
+<p><strong>Intuition about two lanes.</strong> Here is another way to see it. Under late merge, both lanes must be simultaneously full for a car to be blocked. Suppose each individual lane is full with probability <span class="arithmatex">\(p\)</span>. If the two lanes are roughly independent, the probability both are full at once is approximately <span class="arithmatex">\(p^2\)</span>. For example, if <span class="arithmatex">\(p = 0.3\)</span>, then <span class="arithmatex">\(p^2 = 0.09\)</span> — blocking drops from 30% to 9%. Two lanes are dramatically more forgiving than one.</p>
+<p><strong>Connection to throughput.</strong> Throughput is the rate at which cars successfully pass through the merge: <span class="arithmatex">\(\text{throughput} = \lambda \cdot (1 - P_{\text{block}})\)</span>. Every blocked car is a car that does not get through. Reducing <span class="arithmatex">\(P_{\text{block}}\)</span> by doubling <span class="arithmatex">\(K\)</span> therefore raises throughput nearly proportionally. Late merge does not speed up the bottleneck — the merge point still processes cars at rate <span class="arithmatex">\(\mu\)</span> — but it ensures the bottleneck is never starved of cars to process, maximizing the number of drivers who make it through.</p>
+<p><strong>The broader lesson.</strong> The key insight is that the <em>structure</em> of a waiting space matters, not just its total size. Two separate lanes of capacity <span class="arithmatex">\(K\)</span> each are far better than one lane of capacity <span class="arithmatex">\(2K\)</span> would naively seem — because blocking requires both lanes to fill simultaneously. This logic generalises widely: in computer networks, having multiple independent paths reduces the chance a single congested link stalls all traffic; in hospitals, pooling patients across several triage nurses (rather than assigning one nurse per patient) reduces the chance one idle nurse sits beside an overwhelmed colleague. Wherever there is a finite buffer feeding a shared bottleneck, the late-merge principle applies: spread the waiting space across parallel channels and blocking probability falls dramatically.</p>
 
 
 

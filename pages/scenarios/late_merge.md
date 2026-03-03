@@ -70,3 +70,21 @@ pass through rather than being turned away.
 
 Both systems have the same total arrival rate $\lambda$ and merge service
 rate $\mu$.
+
+## Understanding the Math
+
+**Blocking probability.** When a new car arrives and finds the lane buffer completely full, the car cannot enter and is turned away. We call this being "blocked." The blocking probability $P_{\text{block}}$ is the long-run fraction of all arriving cars that get blocked. A higher blocking probability means more cars are lost to the system and throughput falls.
+
+**The finite-buffer formula.** For a queue with random arrivals, exponential service, a single server, and a buffer that holds at most $K$ cars (the M/M/1/K model), the blocking probability is:
+
+$$P_{\text{block}} = \frac{(1-\rho)\,\rho^K}{1 - \rho^{K+1}}$$
+
+Here $\rho = \lambda/\mu$ is the utilization — the ratio of arrival rate $\lambda$ to service rate $\mu$. Notice that the numerator contains $\rho^K$. Because $\rho < 1$, increasing $K$ by 1 multiplies the numerator by $\rho < 1$, shrinking $P_{\text{block}}$ faster than linearly. Each extra slot in the buffer is more valuable than a simple linear reduction would suggest.
+
+**Early vs. late merge in terms of $K$.** Early merging creates a single queue with buffer $K$ — one lane's worth of space. Late merging uses both lanes up to the merge point, creating an effective buffer of $2K$ cars total. Plugging $2K$ into the formula instead of $K$ replaces $\rho^K$ with $\rho^{2K} = (\rho^K)^2$. Since $\rho^K < 1$, squaring it makes it much smaller. This is the mathematical reason why doubling the buffer dramatically reduces blocking.
+
+**Intuition about two lanes.** Here is another way to see it. Under late merge, both lanes must be simultaneously full for a car to be blocked. Suppose each individual lane is full with probability $p$. If the two lanes are roughly independent, the probability both are full at once is approximately $p^2$. For example, if $p = 0.3$, then $p^2 = 0.09$ — blocking drops from 30% to 9%. Two lanes are dramatically more forgiving than one.
+
+**Connection to throughput.** Throughput is the rate at which cars successfully pass through the merge: $\text{throughput} = \lambda \cdot (1 - P_{\text{block}})$. Every blocked car is a car that does not get through. Reducing $P_{\text{block}}$ by doubling $K$ therefore raises throughput nearly proportionally. Late merge does not speed up the bottleneck — the merge point still processes cars at rate $\mu$ — but it ensures the bottleneck is never starved of cars to process, maximizing the number of drivers who make it through.
+
+**The broader lesson.** The key insight is that the *structure* of a waiting space matters, not just its total size. Two separate lanes of capacity $K$ each are far better than one lane of capacity $2K$ would naively seem — because blocking requires both lanes to fill simultaneously. This logic generalises widely: in computer networks, having multiple independent paths reduces the chance a single congested link stalls all traffic; in hospitals, pooling patients across several triage nurses (rather than assigning one nurse per patient) reduces the chance one idle nurse sits beside an overwhelmed colleague. Wherever there is a finite buffer feeding a shared bottleneck, the late-merge principle applies: spread the waiting space across parallel channels and blocking probability falls dramatically.

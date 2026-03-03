@@ -1,14 +1,17 @@
 Convoy Effect: FIFO vs. Shortest Job First (SJF)
-
   Arrival rate: 0.7, estimated mean service: 0.725
   Short jobs: 90% (mean 0.25), Long jobs: 10% (mean 5.0)
 
-  Metric              FIFO         SJF   Improvement
-  --------------------------------------------------
-  mean               4.134       2.732         1.51x
-  median             0.718       0.550         1.31x
-  p95               18.513      12.282         1.51x
-  p99               30.284      21.949         1.38x
+shape: (4, 4)
+┌────────┬───────────┬───────────┬─────────────┐
+│ metric ┆ fifo      ┆ sjf       ┆ improvement │
+│ ---    ┆ ---       ┆ ---       ┆ ---         │
+│ str    ┆ f64       ┆ f64       ┆ f64         │
+╞════════╪═══════════╪═══════════╪═════════════╡
+│ mean   ┆ 4.134109  ┆ 2.732434  ┆ 1.512977    │
+│ median ┆ 0.71813   ┆ 0.549923  ┆ 1.305873    │
+│ p95    ┆ 18.512625 ┆ 12.282407 ┆ 1.507247    │
+│ p99    ┆ 30.283965 ┆ 21.949088 ┆ 1.379737    │
+└────────┴───────────┴───────────┴─────────────┘
 
-  Note: SJF is optimal for mean sojourn time but requires
-  knowing job sizes in advance (not always possible in practice).
+Note: SJF is optimal for mean sojourn time but requires knowing job sizes in advance.

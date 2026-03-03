@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../../reference/timeout/">
+        <link rel="prev" href="../sojourn_time/">
       
       
         <link rel="next" href="../convoy_effect/">
@@ -839,6 +839,146 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../arrival_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrival Process: The Building Block of Every Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Server Utilization: The Most Important Number in Queueing Theory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue_formation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue Formation: Randomness Creates Waiting Even with Spare Capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../littles_law/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Little's Law: The Universal Conservation Law of Queues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sojourn_time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sojourn Time: How Long Does a Customer Actually Spend in the System?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -984,6 +1124,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1064,34 +1215,6 @@
     
   
     Late (Zipper) Merge: Courtesy Reduces Throughput
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../littles_law/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Little's Law: The Universal Conservation Law of Queues
   
 
     
@@ -1361,6 +1484,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#understanding-the-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Math
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1428,6 +1562,15 @@ are currently on each link. Each <code>Car</code> process:</p>
 </ol>
 <p>Two runs are compared — one with only the top and bottom routes, one with the
 <span class="arithmatex">\(AB\)</span> shortcut added.</p>
+<h2 id="understanding-the-math">Understanding the Math</h2>
+<p><strong>Nash equilibrium.</strong> A Nash equilibrium is a situation where every player has chosen a strategy and no single player can improve their own outcome by switching to a different strategy — assuming everyone else stays put. It is named after mathematician John Nash. Think of it as a stable fixed point: if you woke up one morning in a Nash equilibrium, you would have no reason to change what you are doing. Crucially, a Nash equilibrium need not be the best possible outcome for everyone collectively.</p>
+<p><strong>The paradox, step by step.</strong> Label the number of cars <span class="arithmatex">\(N\)</span> and suppose the congested links have delay <span class="arithmatex">\(\alpha \cdot n\)</span> where <span class="arithmatex">\(n\)</span> is the number of cars currently using that link. Without the shortcut, traffic splits evenly: <span class="arithmatex">\(N/2\)</span> cars use each route. Each driver's travel time is <span class="arithmatex">\((N/2)\alpha + c\)</span>, where <span class="arithmatex">\(c\)</span> is the fixed delay on the non-congested link. Neither route is faster than the other, so no driver wants to switch — that is Nash equilibrium.</p>
+<p>Now add the shortcut <span class="arithmatex">\(A \to B\)</span> with near-zero travel time <span class="arithmatex">\(\varepsilon\)</span>. A single driver considering a switch reasons: "Link <span class="arithmatex">\(AB\)</span> is essentially free. If I take <span class="arithmatex">\(SA\)</span>, cross to <span class="arithmatex">\(B\)</span>, and take <span class="arithmatex">\(BT\)</span>, I avoid the fixed cost <span class="arithmatex">\(c\)</span>." If that driver is the only one to switch, it looks cheaper. But every driver makes the same calculation simultaneously. At the new equilibrium, all <span class="arithmatex">\(N\)</span> drivers pile onto <span class="arithmatex">\(SA\)</span> and <span class="arithmatex">\(BT\)</span>:</p>
+<div class="arithmatex">\[t_{\text{shortcut}} = N\alpha + \varepsilon + N\alpha = 2N\alpha + \varepsilon\]</div>
+<p>Since <span class="arithmatex">\(2N\alpha &gt; (N/2)\alpha + c\)</span> for typical parameters, everyone is worse off than before the shortcut was built.</p>
+<p><strong>Price of anarchy.</strong> The ratio of Nash equilibrium cost to the socially optimal cost is called the price of anarchy. Here the social optimum would split traffic evenly at cost <span class="arithmatex">\((N/2)\alpha + c\)</span>, but selfish routing delivers <span class="arithmatex">\(2N\alpha + \varepsilon\)</span>. The price of anarchy exceeds 1, meaning individual rationality destroys collective welfare.</p>
+<p><strong>A two-player analogy.</strong> The Prisoner's Dilemma is the classic example of this tension. Two suspects each choose independently to cooperate or defect. Defecting is a dominant strategy — it is better for you regardless of what the other person does. Yet if both defect, both get a worse outcome than if both had cooperated. Braess's paradox is the same logic scaled to <span class="arithmatex">\(N\)</span> drivers.</p>
+<p><strong>The logit model.</strong> The simulation uses a probabilistic choice rule: the probability a driver picks route <span class="arithmatex">\(r\)</span> is proportional to <span class="arithmatex">\(\exp(-\beta \cdot t_r)\)</span>, where <span class="arithmatex">\(t_r\)</span> is the expected travel time on route <span class="arithmatex">\(r\)</span> and <span class="arithmatex">\(\beta\)</span> is a sensitivity parameter. This is the softmax function from statistics. When <span class="arithmatex">\(\beta\)</span> is large, drivers strongly prefer the fastest route and the outcome approaches the pure Nash equilibrium. When <span class="arithmatex">\(\beta\)</span> is small, drivers choose nearly randomly and the paradox weakens. The parameter <span class="arithmatex">\(\beta\)</span> captures how responsive real drivers are to time differences.</p>
 
 
 

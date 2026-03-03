@@ -2,6 +2,10 @@
 
 import random
 import statistics
+import sys
+
+import altair as alt
+import polars as pl
 
 from asimpy import Environment, Process, Resource
 
@@ -76,23 +80,36 @@ def run_separate(arrival_rate: float = ARRIVAL_RATE, seed: int = SEED) -> float:
     return statistics.mean(sojourn_times)
 
 
-print(f"Arrival rate: {ARRIVAL_RATE}, service rate per server: {SERVICE_RATE}")
-print(f"Number of servers: {N_SERVERS}, utilization rho = {RHO:.2f}")
-print()
-
-pooled_W = run_pooled()
-separate_W = run_separate()
-
-print(f"Mean sojourn time — pooled (single queue):  {pooled_W:.3f}")
-print(f"Mean sojourn time — separate (pick a lane): {separate_W:.3f}")
-print(f"Separate queues are {separate_W / pooled_W:.2f}x slower than pooled")
-print()
-
-# Show the effect across several utilization levels
-print(f"{'rho':>6}  {'Pooled W':>10}  {'Separate W':>12}  {'Ratio':>7}")
-print("-" * 44)
+sweep_rows = []
 for rho in [0.5, 0.6, 0.7, 0.8, 0.9]:
     rate = rho * N_SERVERS * SERVICE_RATE
     pw = run_pooled(arrival_rate=rate)
     sw = run_separate(arrival_rate=rate)
-    print(f"{rho:>6.2f}  {pw:>10.3f}  {sw:>12.3f}  {sw / pw:>7.2f}x")
+    sweep_rows.append({"rho": rho, "pooled_W": pw, "separate_W": sw, "ratio": sw / pw})
+
+df_sweep = pl.DataFrame(sweep_rows)
+print(f"Pooled vs. separate queues ({N_SERVERS} servers, service rate {SERVICE_RATE})")
+print(df_sweep)
+
+pooled_W = run_pooled()
+separate_W = run_separate()
+print(
+    f"\nAt rho={RHO:.2f}: pooled_W={pooled_W:.3f}, separate_W={separate_W:.3f}, "
+    f"separate is {separate_W / pooled_W:.2f}x slower"
+)
+
+df_plot = df_sweep.unpivot(
+    on=["pooled_W", "separate_W"], index="rho", variable_name="system", value_name="W"
+)
+chart = (
+    alt.Chart(df_plot)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("rho:Q", title="Utilization per server (ρ)"),
+        y=alt.Y("W:Q", title="Mean sojourn time (W)"),
+        color=alt.Color("system:N", title="Queue type"),
+        tooltip=["rho:Q", "system:N", "W:Q"],
+    )
+    .properties(title="Pooled vs. Separate Queues: Mean Sojourn Time")
+)
+chart.save(sys.argv[1])

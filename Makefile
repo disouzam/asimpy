@@ -1,7 +1,8 @@
 EXAMPLES_SRC=$(wildcard examples/*.py)
-EXAMPLES_OUT=$(patsubst examples/%.py,output/examples/%.txt,${EXAMPLES_SRC})
+EXAMPLES_TXT=$(patsubst examples/%.py,output/examples/%.txt,${EXAMPLES_SRC})
 SCENARIOS_SRC=$(wildcard scenarios/*.py)
-SCENARIOS_OUT=$(patsubst scenarios/%.py,output/scenarios/%.txt,${SCENARIOS_SRC})
+SCENARIOS_TXT=$(patsubst scenarios/%.py,output/scenarios/%.txt,${SCENARIOS_SRC})
+SCENARIOS_GRAPH=$(patsubst scenarios/%.py,output/scenarios/%.html,${SCENARIOS_SRC})
 
 .PHONY: docs
 all: commands
@@ -55,7 +56,7 @@ lint:
 	@make types
 
 ## examples: regenerate example output
-examples: ${EXAMPLES_OUT}
+examples: ${EXAMPLES_TXT}
 
 output/examples/%.txt: examples/%.py
 	@mkdir -p output/examples
@@ -66,11 +67,11 @@ publish:
 	twine upload --verbose dist/*
 
 ## scenarios: regenerate scenario output
-scenarios: ${SCENARIOS_OUT}
+scenarios: ${SCENARIOS_TXT} ${SCENARIOS_GRAPH}
 
-output/scenarios/%.txt: scenarios/%.py
+output/scenarios/%.txt output/scenarios/%.html: scenarios/%.py
 	@mkdir -p output/scenarios
-	python $< > $@ 2>&1
+	python $< output/scenarios/$*.html > output/scenarios/$*.txt
 
 ## serve: serve documentation
 serve:
@@ -82,4 +83,4 @@ test:
 
 ## types: check types
 types:
-	ty check .
+	ty check src tests
