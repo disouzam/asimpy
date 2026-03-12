@@ -3,9 +3,12 @@
 from dataclasses import dataclass, field
 import heapq
 import itertools
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from .timeout import _NO_TIME, Timeout
+
+if TYPE_CHECKING:
+    from .process import Process
 
 
 class Environment:
@@ -14,6 +17,8 @@ class Environment:
     def __init__(self):
         self._now = 0
         self._pending = []
+        self.active_process: "Process" | None = None
+        """The process currently executing, or None between events."""
 
     @property
     def now(self):

@@ -1,8 +1,10 @@
 EXAMPLES_SRC=$(wildcard examples/*.py)
-EXAMPLES_TXT=$(patsubst examples/%.py,output/examples/%.txt,${EXAMPLES_SRC})
+EXAMPLES_TXT=$(patsubst examples/%.py,output/%.txt,${EXAMPLES_SRC})
+
 SCENARIOS_SRC=$(wildcard scenarios/*.py)
-SCENARIOS_TXT=$(patsubst scenarios/%.py,output/scenarios/%.txt,${SCENARIOS_SRC})
-SCENARIOS_GRAPH=$(patsubst scenarios/%.py,output/scenarios/%.html,${SCENARIOS_SRC})
+SCENARIOS_TMP=$(patsubst scenarios/%.py,tmp/%.html,${SCENARIOS_SRC})
+
+.PRECIOUS: ${SCENARIOS_TMP}
 
 .PHONY: docs
 all: commands
@@ -27,7 +29,7 @@ check:
 
 ## clean: clean up
 clean:
-	@rm -rf ./dist
+	@rm -rf ./dist ./tmp
 	@find . -path './.venv' -prune -o -type d -name '__pycache__' -exec rm -rf {} +
 	@find . -path './.venv' -prune -o -type f -name '*~' -exec rm {} +
 
@@ -37,10 +39,11 @@ coverage:
 	@python -m coverage report --show-missing
 
 ## docs: build documentation
-docs:
+docs: ${SCENARIOS_TMP}
 	@mkdocs build
 	@touch docs/.nojekyll
 	@cp docs-requirements.txt docs/requirements.txt
+	@cp -r tmp docs/notebooks
 
 ## fix: fix code issues
 fix:
@@ -58,8 +61,8 @@ lint:
 ## examples: regenerate example output
 examples: ${EXAMPLES_TXT}
 
-output/examples/%.txt: examples/%.py
-	@mkdir -p output/examples
+output/%.txt: examples/%.py
+	@mkdir -p output
 	python $< > $@ 2>&1
 
 ## publish: publish using ~/.pypirc credentials
@@ -67,11 +70,11 @@ publish:
 	twine upload --verbose dist/*
 
 ## scenarios: regenerate scenario output
-scenarios: ${SCENARIOS_TXT} ${SCENARIOS_GRAPH}
+scenarios: ${SCENARIOS_HTML}
 
-output/scenarios/%.txt output/scenarios/%.html: scenarios/%.py
-	@mkdir -p output/scenarios
-	python $< output/scenarios/$*.html > output/scenarios/$*.txt
+tmp/%.html: scenarios/%.py
+	@mkdir -p tmp
+	uv run marimo export html-wasm --force --sandbox --mode edit $< -o $@
 
 ## serve: serve documentation
 serve:

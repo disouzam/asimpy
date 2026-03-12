@@ -6,6 +6,10 @@ dist/
 __pycache__/
 *.py[cod]
 
+# Marimo
+tmp/
+__marimo__
+
 # Testing
 .pytest_cache/
 
@@ -21,4 +25,3 @@ coverage.json
 
 # MacOS
 .DS_store
-.aider*

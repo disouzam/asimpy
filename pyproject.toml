@@ -1,6 +1,6 @@
 [project]
 name = "asimpy"
-version = "0.14.0"
+dynamic = ["version"]
 requires-python = ">=3.12"
 authors = [
     {name = "Greg Wilson", email = "gvwilson@third-bit.com"},
@@ -29,6 +29,9 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/asimpy"]
 
+[tool.hatch.version]
+path = "src/asimpy/__init__.py"
+
 [tool.coverage.report]
 exclude_lines = [
     "@abstractmethod",
@@ -40,6 +43,7 @@ dev = [
     "altair>=6.0.0",
     "build>=1.4.0",
     "coverage>=7.13.2",
+    "marimo>=0.20.4",
     "markdown-include>=0.8.1",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.7.1",

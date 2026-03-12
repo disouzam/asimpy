@@ -23,25 +23,25 @@ nav:
     - reference/event.md
     - reference/firstof.md
     - reference/interrupt.md
+    - reference/preemptive.md
     - reference/process.md
     - reference/resource.md
     - reference/simqueue.md
     - reference/timeout.md
   - Scenarios:
-    - scenarios/arrival_process.md
-    - scenarios/server_utilization.md
-    - scenarios/queue_formation.md
-    - scenarios/littles_law.md
-    - scenarios/sojourn_time.md
-    - scenarios/braess_paradox.md
-    - scenarios/convoy_effect.md
-    - scenarios/inspectors_paradox.md
-    - scenarios/late_merge.md
-    - scenarios/mm1_nonlinearity.md
-    - scenarios/pooled_vs_separate.md
-    - scenarios/priority_starvation.md
-    - scenarios/rush_hour.md
-    - scenarios/tandem_queue.md
+    - scenarios/01_basic_ideas.md
+    - scenarios/02_queue_formation.md
+    - scenarios/03_littles_law.md
+    - scenarios/04_sojourn_time.md
+    - scenarios/05_mm1_nonlinearity.md
+    - scenarios/06_pooled_vs_separate.md
+    - scenarios/07_late_merge.md
+    - scenarios/08_inspectors_paradox.md
+    - scenarios/09_convoy_effect.md
+    - scenarios/10_priority_starvation.md
+    - scenarios/11_tandem_queue.md
+    - scenarios/12_rush_hour.md
+    - scenarios/13_braess_paradox.md
 
 plugins:
 - mkdocstrings:

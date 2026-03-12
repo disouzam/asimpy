@@ -23,6 +23,7 @@ class Process(ABC):
         self._env = env
         self._done = False
         self._interrupt = None
+        self._current_event = None
 
         self.init(*args, **kwargs)
 
@@ -74,21 +75,31 @@ class Process(ABC):
             return
 
         try:
+            self._env.active_process = self
             if self._interrupt is None:
                 yielded = self._coro.send(value)
             else:
+                if self._current_event is not None:
+                    self._current_event.cancel()
+                    self._current_event = None
                 exc = self._interrupt
                 self._interrupt = None
                 yielded = self._coro.throw(exc)
 
+            self._current_event = yielded
             yielded._add_waiter(self.resume)
 
         except StopIteration:
             self._done = True
+            self._current_event = None
 
         except Exception as exc:
             self._done = True
+            self._current_event = None
             raise exc
+
+        finally:
+            self._env.active_process = None
 
     def resume(self, value=None):
         if not self._done:
